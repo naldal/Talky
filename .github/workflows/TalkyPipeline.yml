@@ -17,9 +17,9 @@ jobs:
     - name: checkout
       run: git checkout develop
     - name: install Brew
-      run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      run: sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     - name: install Tuist
-      run: curl -Ls https://install.tuist.io | bash
+      run: sudo curl -Ls https://install.tuist.io | bash
     - name: clean before go through
       run: tuist clean
     - name: tuist fetch
@@ -29,6 +29,6 @@ jobs:
     - name: reset
       run: git reset --hard
     - name: build
-      run: xcodebuild build -workspace workspace.xcworkspace -scheme TalkyDev -destination 'platform=iOS Simulator,name=iPhone 14 Plus,OS=latest'
+      run: sudo xcodebuild build -workspace workspace.xcworkspace -scheme TalkyDev -destination 'platform=iOS Simulator,name=iPhone 14 Plus,OS=latest'
     - name: tests
-      run: xcodebuild test -workspace workspace.xcworkspace -scheme TalkyDev -destination 'platform=iOS Simulator,name=iPhone 14 Plus,OS=latest'
+      run: sudo xcodebuild test -workspace workspace.xcworkspace -scheme TalkyDev -destination 'platform=iOS Simulator,name=iPhone 14 Plus,OS=latest'
