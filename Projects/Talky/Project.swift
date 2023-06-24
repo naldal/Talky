@@ -9,7 +9,8 @@ let project = Project.makeModule(
     .snapkit,
     .rxswift,
     .moya,
-    .project(target: "TalkyAssets", path: "../TalkyAssets")
+    .TalkyAssets,
+    .then
   ],
   testDependencies: [
     .quick,

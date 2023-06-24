@@ -6,4 +6,21 @@
 //  Copyright © 2023 organizationName. All rights reserved.
 //
 
-import Foundation
+import UIKit
+import SnapKit
+
+extension UIView {
+  
+  func makeConstraints(baseView: UIView, constraints: (_ make: ConstraintMaker) -> Void) {
+    baseView.addSubview(self)
+    self.snp.makeConstraints(constraints)
+  }
+  
+  func remakeConstraints(baseView: UIView, constraints: (_ make: ConstraintMaker) -> Void) {
+    baseView.addSubview(self)
+    self.snp.remakeConstraints(constraints)
+  }
+  
+}
+
+
