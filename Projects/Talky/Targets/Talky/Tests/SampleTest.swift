@@ -8,7 +8,7 @@
 
 import Quick
 import Nimble
-@testable import Talky
+@testable import TalkyDev
 
 final class SampleTest: QuickSpec {
   
