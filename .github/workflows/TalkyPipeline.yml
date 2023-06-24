@@ -14,12 +14,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: step in
+      run: cd /Users/songhamin/Desktop/Talky
     - name: checkout
       run: git checkout develop
     - name: install Brew
       run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     - name: install Tuist
-      run: curl -Ls https://install.tuist.io | bash
+      run: sudo curl -Ls https://install.tuist.io | bash
     - name: clean before go through
       run: tuist clean
     - name: tuist fetch
