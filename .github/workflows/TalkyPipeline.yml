@@ -14,10 +14,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: step in
+      run: cd /Users/songhamin/Desktop/Talky
     - name: checkout
       run: git checkout develop
     - name: install Brew
-      run: sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     - name: install Tuist
       run: sudo curl -Ls https://install.tuist.io | bash
     - name: clean before go through
@@ -29,6 +31,6 @@ jobs:
     - name: reset
       run: git reset --hard
     - name: build
-      run: sudo xcodebuild build -workspace workspace.xcworkspace -scheme TalkyDev -destination 'platform=iOS Simulator,name=iPhone 14 Plus,OS=latest'
+      run: xcodebuild build -workspace workspace.xcworkspace -scheme TalkyDev -destination 'platform=iOS Simulator,name=iPhone 14 Plus,OS=latest'
     - name: tests
-      run: sudo xcodebuild test -workspace workspace.xcworkspace -scheme TalkyDev -destination 'platform=iOS Simulator,name=iPhone 14 Plus,OS=latest'
+      run: xcodebuild test -workspace workspace.xcworkspace -scheme TalkyDev -destination 'platform=iOS Simulator,name=iPhone 14 Plus,OS=latest'
