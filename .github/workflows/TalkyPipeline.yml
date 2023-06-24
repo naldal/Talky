@@ -29,6 +29,6 @@ jobs:
     - name: reset
       run: git reset --hard
     - name: build
-      run: xcodebuild build -workspace workspace.xcworkspace -scheme Talky -destination 'platform=iOS Simulator,name=iPhone 14 Plus,OS=latest'
+      run: xcodebuild build -workspace workspace.xcworkspace -scheme TalkyDev -destination 'platform=iOS Simulator,name=iPhone 14 Plus,OS=latest'
     - name: tests
       run: xcodebuild test -workspace workspace.xcworkspace -scheme TalkyDev -destination 'platform=iOS Simulator,name=iPhone 14 Plus,OS=latest'
