@@ -1,13 +1,11 @@
 # This workflow will build a Swift project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
 
-name: Swift
+name: TalkyPipeline
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: [ "develop" ]
 
 jobs:
   build:
@@ -16,7 +14,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Build
-      run: swift build -v
-    - name: Run tests
-      run: swift test -v
+    - name: checkout
+      run: git checkout develop
+    - name: clean before go
+      run: tuist clean
+    - name: tuist fetch
+      run: tuist fetch -u
+    - name: build
+      run: xcodebuild build -workspace workspace.xcworkspace -scheme Talky -destination 'platform=iOS Simulator,name=iPhone 14 Plus,OS=latest'
+    - name: tests
+      run: xcodebuild test -workspace workspace.xcworkspace -scheme TalkyDev -destination 'platform=iOS Simulator,name=iPhone 14 Plus,OS=latest'
