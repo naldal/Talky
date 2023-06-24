@@ -6,7 +6,6 @@ let project = Project.makeModule(
   product: .app,
   dependencies: [],
   testDependencies: [.quick, .nimble],
-  additionalTargets: [],
   isIncludeOnly: false
 )
 

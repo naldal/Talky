@@ -8,13 +8,13 @@ let project = Project.makeModule(
   dependencies: [
     .snapkit,
     .rxswift,
-    .moya
+    .moya,
+    .project(target: "TalkyAssets", path: "../TalkyAssets")
   ],
   testDependencies: [
     .quick,
     .nimble
   ],
   bridgingHeaderPath: "Support/BridgingHeader/Talky-Bridging-Header.h",
-  customInfoPlist: .file(path: "Support/InfoPlist/Info.plist"),
-  additionalTargets: []
+  customInfoPlist: .file(path: "Support/InfoPlist/Info.plist")
 )

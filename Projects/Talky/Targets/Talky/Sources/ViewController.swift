@@ -1,10 +1,15 @@
 import UIKit
-import Speech
+import TalkyAssets
 
-class ViewController: UIViewController {
-
+class TranslationViewController: UIViewController {
+  let testLabel = UILabel()
+  let imageView = UIImageView()
+  
   override func viewDidLoad() {
-    self.view.backgroundColor = .white
+    
+    // test
+    self.view.backgroundColor = Colors.defaultColor.color
+    let image = Images.asdf.image
   }
 }
   

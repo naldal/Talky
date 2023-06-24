@@ -14,7 +14,6 @@ public extension Project {
     testDependencies: [TargetDependency] = [],
     bridgingHeaderPath: String? = nil,
     customInfoPlist: InfoPlist = .default,
-    additionalTargets: [String],
     isIncludeOnly: Bool = false
   ) -> Project {
         

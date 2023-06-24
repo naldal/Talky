@@ -10,6 +10,7 @@ import Quick
 import Nimble
 @testable import Talky
 
-final class SampleTest {
+final class SampleTest: QuickSpec {
+  
   
 }
