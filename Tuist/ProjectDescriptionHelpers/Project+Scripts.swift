@@ -15,4 +15,11 @@ extension TargetScript {
       return .post(script: scriptPath, name: name)
     }
   }
+  
+  static var lint: TargetScript {
+    return self.makeScript(order: .pre,
+                           scriptPath: "../Tool/Lint/swiftlint --config \"../Tool/Lint/swiftlint.yml\"",
+                           name: "Lint"
+    )
+  }
 }

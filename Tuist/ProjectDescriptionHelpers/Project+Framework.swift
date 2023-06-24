@@ -11,13 +11,7 @@ extension Project {
       testDependencies: [TargetDependency]
   ) -> [Target] {
         
-    let scripts: [TargetScript] = [
-      TargetScript.makeScript(
-          order: .pre,
-          scriptPath: "../Tool/Lint/swiftlint --config \"../Tool/Lint/swiftlint.yml\"",
-          name: "Lint"
-      )
-    ]
+    let scripts: [TargetScript] = [.lint]
           
     let mainTarget = Target(
       name: name,

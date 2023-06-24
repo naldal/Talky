@@ -80,7 +80,8 @@ public extension Project {
       targets: targets,
       resourceSynthesizers: [
         .assets(),
-        .strings()
+        .strings(),
+        .fonts()
       ]
     )
   }
@@ -155,13 +156,7 @@ public extension Project {
     }()
   
     // add your own scripts
-    let scripts: [TargetScript] = [
-    TargetScript.makeScript(
-        order: .pre,
-        scriptPath: "../Tool/Lint/swiftlint --config \"../Tool/Lint/swiftlint.yml\"",
-        name: "Lint"
-      )
-    ]
+    let scripts: [TargetScript] = [.lint]
   
     let mainTarget = Target(
       name: targetName,
