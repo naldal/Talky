@@ -24,8 +24,8 @@ jobs:
       run: tuist clean
     - name: tuist fetch
       run: tuist fetch -u
-    - name: tuist build
-      run: tuist build -n
+    - name: tuist generate
+      run: tuist generate -n
     - name: reset
       run: git reset --hard
     - name: build
