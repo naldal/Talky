@@ -4,6 +4,8 @@ import ProjectDescriptionHelpers
 let project = Project.makeModule(
   name: "TalkyUIDev",
   product: .app,
+  dependencies: [],
+  testDependencies: [.quick, .nimble],
   additionalTargets: [],
   isIncludeOnly: false
 )

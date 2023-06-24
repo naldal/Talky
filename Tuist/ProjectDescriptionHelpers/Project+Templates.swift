@@ -78,7 +78,10 @@ public extension Project {
       packages: packages,
       settings: settings,
       targets: targets,
-      resourceSynthesizers: []
+      resourceSynthesizers: [
+        .assets(),
+        .strings()
+      ]
     )
   }
     
