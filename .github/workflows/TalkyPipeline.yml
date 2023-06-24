@@ -20,10 +20,14 @@ jobs:
       run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     - name: install Tuist
       run: curl -Ls https://install.tuist.io | bash
-    - name: clean before go
+    - name: clean before go through
       run: tuist clean
     - name: tuist fetch
       run: tuist fetch -u
+    - name: tuist build
+      run: tuist build -n
+    - name: reset
+      run: git reset --hard
     - name: build
       run: xcodebuild build -workspace workspace.xcworkspace -scheme Talky -destination 'platform=iOS Simulator,name=iPhone 14 Plus,OS=latest'
     - name: tests
