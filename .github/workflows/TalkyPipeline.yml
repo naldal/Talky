@@ -16,7 +16,7 @@ jobs:
     - uses: actions/checkout@v3
     - name: checkout
       run: git checkout develop
-    - name: install Brew:
+    - name: install Brew
       run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     - name: install Tuist
       run: curl -Ls https://install.tuist.io | bash
