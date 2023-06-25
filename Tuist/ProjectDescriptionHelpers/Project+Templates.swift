@@ -13,7 +13,7 @@ public extension Project {
     dependencies: [TargetDependency] = [],
     testDependencies: [TargetDependency] = [],
     bridgingHeaderPath: String? = nil,
-    customInfoPlist: InfoPlist = .default,
+    customInfoPlist: InfoPlist? = nil,
     isIncludeOnly: Bool = false
   ) -> Project {
         
@@ -38,6 +38,7 @@ public extension Project {
       product: product,
       baseBundleId: baseBundleId,
       deploymentTarget: deploymentTarget,
+      customInfoPlist: customInfoPlist,
       dependencies: dependencies,
       testDependencies: testDependencies,
       additionalSourcePaths: targetAdditionalSourcePath,
@@ -78,7 +79,8 @@ public extension Project {
       settings: settings,
       targets: targets,
       resourceSynthesizers: [
-        .strings()
+        .strings(),
+        .plists()
       ]
     )
   }
@@ -93,6 +95,7 @@ public extension Project {
     product: Product,
     baseBundleId: String,
     deploymentTarget: DeploymentTarget?,
+    customInfoPlist: InfoPlist?,
     dependencies: [TargetDependency],
     testDependencies: [TargetDependency],
     additionalSourcePaths: [String],
@@ -154,6 +157,11 @@ public extension Project {
   
     // add your own scripts
     let scripts: [TargetScript] = [.lint]
+    
+    var infoPlist: InfoPlist = .file(path: "../\(originName)/Targets/Talky/Resources/TalkyInfo.plist")
+    if let customInfoPlist {
+      infoPlist = customInfoPlist
+    }
   
     let mainTarget = Target(
       name: targetName,
@@ -161,7 +169,7 @@ public extension Project {
       product: product,
       bundleId: "\(baseBundleId).\(targetName)",
       deploymentTarget: deploymentTarget,
-      infoPlist: .file(path: "../\(originName)/Support/InfoPlist/Info.plist"),
+      infoPlist: infoPlist,
       sources: sources,
       resources: resources,
       scripts: scripts,
@@ -174,7 +182,7 @@ public extension Project {
       product: .unitTests,
       bundleId: "\(baseBundleId).\(targetName)Tests",
       deploymentTarget: deploymentTarget,
-      infoPlist: .file(path: "../\(originName)/Support/InfoPlist/Info.plist"),
+      infoPlist: infoPlist,
       sources: ["../\(originName)/Targets/\(originName)/Tests/**"],
       resources: ["../\(originName)/Targets/\(originName)/TestResources/**"],
       dependencies: testDependencies

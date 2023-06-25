@@ -10,5 +10,4 @@ public extension TargetDependency {
   static let TalkyAssets: TargetDependency = .project(target: "TalkyAssets", path: "../TalkyAssets")
   static let reactorkit: TargetDependency = .external(name: "ReactorKit")
   static let rxflow: TargetDependency = .external(name: "RxFlow")
-  static let googleTranslate: TargetDependency = .external(name: "SwiftGoogleTranslate")
 }
