@@ -9,7 +9,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     guard let windowScene = (scene as? UIWindowScene) else { return }
     
     self.window = UIWindow(windowScene: windowScene)
-    let reactor = TranslationReactor()
+    let reactor = TranslationReactor(usecase: TranslationUsecase(repository: TranslationRepositoryImplement()))
     let mainViewController = TranslationViewController(reactor: reactor)
     
     self.window?.rootViewController = mainViewController

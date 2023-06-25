@@ -12,6 +12,7 @@ import TalkyAssets
 import Speech
 import ReactorKit
 import RxSwift
+import RxCocoa
 import AVFoundation
 
 class TranslationViewController: UIViewController, View {
@@ -120,6 +121,23 @@ class TranslationViewController: UIViewController, View {
   
   func bind(reactor: TranslationReactor) {
     
+    
+    // state
+    
+    self.reactor?.pulse { $0.translatedText }
+      .subscribe(onNext: { tr in
+        self.motherlandListenerView.setText(text: tr)
+      })
+      .disposed(by: self.disposeBag)
+//    reactor.pulse { $0.translatedText }
+//      .asDriver(onErrorJustReturn: "")
+//      .drive(onNext: { [weak self] translatedText in
+//        self?.motherlandListenerView.setText(text: translatedText)
+//      })
+//      .disposed(by: self.disposeBag)
+    
+    // action
+    
     self.recordButton.rx.tap
       .asDriver()
       .debounce(.seconds(1))
@@ -131,10 +149,14 @@ class TranslationViewController: UIViewController, View {
         } else {
           self?.startRecording()
           print("음성인식 시작")
+          
         }
         
       })
       .disposed(by: self.disposeBag)
+    
+    
+    
   }
   
   // MARK: - internal method
@@ -172,7 +194,8 @@ class TranslationViewController: UIViewController, View {
       
       if result != nil {
         let convertedVoiceString = result?.bestTranscription.formattedString
-        self.engListenerView.setVoiceText(voice: convertedVoiceString)
+        self.engListenerView.setText(text: convertedVoiceString)
+        self.reactor?.action.onNext(.voiceInput(convertedVoiceString ?? ""))
         isFinal = (result?.isFinal)!
       }
       

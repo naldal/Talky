@@ -88,7 +88,7 @@ final class ListerView: UIView, UITextViewDelegate {
  
   // MARK: - internal method
   
-  func setVoiceText(voice text: String?) {
+  func setText(text: String?) {
     self.listeningTextView.text = text
   }
 
