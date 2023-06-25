@@ -20,11 +20,15 @@ class TranslationViewController: UIViewController, View {
   // MARK: - components
   
   private let backgroundView = UIView().then {
-    $0.backgroundColor = Colors.white.color
+    $0.backgroundColor = Colors.brown.color
   }
   
   private let baseView = UIView().then {
     $0.backgroundColor = .clear
+  }
+  
+  private let separatorView = UIView().then {
+    $0.backgroundColor = Colors.gray.color
   }
   
   private let engListenerView = ListerView().then {
@@ -32,7 +36,7 @@ class TranslationViewController: UIViewController, View {
   }
   
   private let motherlandListenerView = ListerView().then {
-    $0.baseColor = .blue
+    $0.baseColor = Colors.white.color
   }
   
   private let recordButton = UIButton().then {
@@ -83,6 +87,16 @@ class TranslationViewController: UIViewController, View {
       make.edges.equalToSuperview()
     }
     
+    self.separatorView.makeConstraints(baseView: self.backgroundView) { make in
+      make.centerY.leading.trailing.equalToSuperview()
+      make.height.equalTo(15)
+    }
+    
+    self.recordButton.makeConstraints(baseView: self.backgroundView) { make in
+      make.centerX.centerY.equalToSuperview()
+      make.width.height.equalTo(60)
+    }
+    
     self.baseView.makeConstraints(baseView: self.backgroundView) { make in
       let safeGuide = self.view.safeAreaLayoutGuide
       make.top.bottom.equalTo(safeGuide)
@@ -91,19 +105,15 @@ class TranslationViewController: UIViewController, View {
     
     self.engListenerView.makeConstraints(baseView: self.baseView) { make in
       make.top.leading.trailing.equalToSuperview()
-      make.height.equalToSuperview().dividedBy(2)
+      make.bottom.equalTo(self.separatorView.snp.top)
     }
     
     self.motherlandListenerView.makeConstraints(baseView: self.baseView) { make in
       make.bottom.leading.trailing.equalToSuperview()
-      make.top.equalTo(self.engListenerView.snp.bottom)
+      make.top.equalTo(self.separatorView.snp.bottom)
     }
     
-    self.recordButton.makeConstraints(baseView: self.baseView) { make in
-      make.centerX.centerY.equalToSuperview()
-      make.width.height.equalTo(60)
-    }
-    
+    self.backgroundView.bringSubviewToFront(self.recordButton)
   }
   
   // MARK: - bind
