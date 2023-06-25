@@ -1,4 +1,5 @@
 import UIKit
+import RxFlow
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   
@@ -6,11 +7,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   
   func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
     guard let windowScene = (scene as? UIWindowScene) else { return }
-    window = UIWindow(windowScene: windowScene)
-    let mainViewController = TranslationViewController()
     
-    window?.rootViewController = mainViewController
-    window?.makeKeyAndVisible()
+    self.window = UIWindow(windowScene: windowScene)
+    let reactor = TranslationReactor()
+    let mainViewController = TranslationViewController(reactor: reactor)
+    
+    self.window?.rootViewController = mainViewController
+    self.window?.makeKeyAndVisible()
   }
   
   func sceneDidDisconnect(_ scene: UIScene) { }

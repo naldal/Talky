@@ -7,10 +7,12 @@ let project = Project.makeModule(
   product: .app,
   dependencies: [
     .snapkit,
+    .reactorkit,
     .rxswift,
     .moya,
     .TalkyAssets,
-    .then
+    .then,
+    .rxflow
   ],
   testDependencies: [
     .quick,
