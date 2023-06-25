@@ -84,7 +84,9 @@ class TranslationViewController: UIViewController, View {
     }
     
     self.baseView.makeConstraints(baseView: self.backgroundView) { make in
-      make.edges.equalToSuperview()
+      let safeGuide = self.view.safeAreaLayoutGuide
+      make.top.bottom.equalTo(safeGuide)
+      make.leading.trailing.equalToSuperview().inset(15)
     }
     
     self.engListenerView.makeConstraints(baseView: self.baseView) { make in
@@ -93,8 +95,8 @@ class TranslationViewController: UIViewController, View {
     }
     
     self.motherlandListenerView.makeConstraints(baseView: self.baseView) { make in
+      make.bottom.leading.trailing.equalToSuperview()
       make.top.equalTo(self.engListenerView.snp.bottom)
-      make.leading.trailing.bottom.equalToSuperview()
     }
     
     self.recordButton.makeConstraints(baseView: self.baseView) { make in
@@ -158,7 +160,8 @@ class TranslationViewController: UIViewController, View {
       var isFinal = false
       
       if result != nil {
-        print("변환된 음성 : ", result?.bestTranscription.formattedString)
+        let convertedVoiceString = result?.bestTranscription.formattedString
+        self.engListenerView.setVoiceText(voice: convertedVoiceString)
         isFinal = (result?.isFinal)!
       }
       
@@ -168,8 +171,6 @@ class TranslationViewController: UIViewController, View {
         
         self.recognitionRequest = nil
         self.recognitionTask = nil
-        
-//        self.startBtn.isEnabled = true
       }
     })
     
