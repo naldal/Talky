@@ -9,6 +9,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import SwiftyJSON
 
 final class TranslationRepositoryImplement: TranslationRepository {
   
@@ -20,7 +21,20 @@ final class TranslationRepositoryImplement: TranslationRepository {
   // MARK: - internal properties
   
   func tranlsate(sourceText: String, to: String) -> Observable<Result<TranslationResult, Error>> {
-    return .just(.success(TranslationResult(translatedText: "this is mocking result", detectedSourceLanguage: "en")))
+    return self.translateAPI.request(target: .translate(apiKey: TalkyInfo.googleClientAPI, sourceText: sourceText, targetLanguage: to))
+      .map { result in
+        switch result {
+          case .success(let data):
+            let jsonData = JSON(data)
+            guard let translations = jsonData["data"]["translations"].array,
+                  let translationData = try? translations.first?.rawData(),
+                  let translationResult = try? JSONDecoder().decode(TranslationResult.self, from: translationData) else { fatalError("AA") }
+            return .success(translationResult)
+          case .failure(let error):
+            return .failure(error)
+        }
+      }
+    
   }
   
   

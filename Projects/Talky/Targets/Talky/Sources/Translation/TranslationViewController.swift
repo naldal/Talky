@@ -125,16 +125,11 @@ class TranslationViewController: UIViewController, View {
     // state
     
     self.reactor?.pulse { $0.translatedText }
-      .subscribe(onNext: { tr in
-        self.motherlandListenerView.setText(text: tr)
+      .observe(on: MainScheduler.instance)
+      .subscribe(onNext: { [weak self] translatedText in
+        self?.motherlandListenerView.setText(text: translatedText)
       })
       .disposed(by: self.disposeBag)
-//    reactor.pulse { $0.translatedText }
-//      .asDriver(onErrorJustReturn: "")
-//      .drive(onNext: { [weak self] translatedText in
-//        self?.motherlandListenerView.setText(text: translatedText)
-//      })
-//      .disposed(by: self.disposeBag)
     
     // action
     

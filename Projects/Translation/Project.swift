@@ -7,7 +7,9 @@ let project = Project(
   targets: Project.makeFrameworkTargets(
     name: projectName,
     customInfoPlist: .default,
-    dependencies: [],
+    dependencies: [
+      .swiftyjson
+    ],
     testDependencies: []
   )
 )

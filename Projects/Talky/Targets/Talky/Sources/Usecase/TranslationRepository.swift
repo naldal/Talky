@@ -14,7 +14,7 @@ protocol TranslationRepository {
   func tranlsate(sourceText: String, to: String) -> Observable<Result<TranslationResult, Error>>
 }
 
-struct TranslationResult {
+struct TranslationResult: Decodable {
   let translatedText: String
   let detectedSourceLanguage: String
 }

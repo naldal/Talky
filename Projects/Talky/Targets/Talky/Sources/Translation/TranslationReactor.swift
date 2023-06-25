@@ -74,7 +74,7 @@ final class TranslationReactor: Reactor {
     }
   }
   
-  func reduce(state: State, mutation: Mutation) -> State {
+  func reduce(state: State, mutation: Mutate) -> State {
     var newState = state
     switch mutation {
       case .empty:

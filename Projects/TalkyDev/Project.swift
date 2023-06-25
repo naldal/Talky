@@ -13,7 +13,8 @@ let project = Project.makeModule(
     .rxmoya,
     .TalkyAssets,
     .then,
-    .rxflow
+    .rxflow,
+    .swiftyjson
   ],
   testDependencies: [
     .quick,
