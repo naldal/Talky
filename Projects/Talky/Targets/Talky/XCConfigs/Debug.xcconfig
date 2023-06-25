@@ -1,2 +1,2 @@
 SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG
-  #include "Talky.xcconfig"
+#include "Talky.xcconfig"

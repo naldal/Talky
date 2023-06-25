@@ -12,13 +12,12 @@ let project = Project.makeModule(
     .moya,
     .TalkyAssets,
     .then,
-    .rxflow,
-    .googleTranslate
+    .rxflow
   ],
   testDependencies: [
     .quick,
     .nimble
   ],
   bridgingHeaderPath: "Support/BridgingHeader/Talky-Bridging-Header.h",
-  customInfoPlist: .file(path: "Support/InfoPlist/Info.plist")
+  customInfoPlist: .file(path: "Targets/Talky/Resources/TalkyInfo.plist")
 )

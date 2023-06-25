@@ -11,8 +11,7 @@ let project = Project.makeModule(
     .moya,
     .TalkyAssets,
     .then,
-    .rxflow,
-    .googleTranslate
+    .rxflow
   ],
   testDependencies: [
     .quick,

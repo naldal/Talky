@@ -72,7 +72,7 @@ class TranslationViewController: UIViewController, View {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    speechRecognizer?.delegate = self
+    
   }
   
   // MARK: - layout
@@ -112,6 +112,7 @@ class TranslationViewController: UIViewController, View {
     
     self.recordButton.rx.tap
       .asDriver()
+      .debounce(.seconds(1))
       .drive(onNext: { [weak self] _ in
         if let isRunning = self?.audioEngine.isRunning, isRunning {
           self?.audioEngine.stop()
@@ -131,19 +132,19 @@ class TranslationViewController: UIViewController, View {
   // MARK: - private method
 
   private func startRecording() {
+    recognitionTask?.cancel()
+    recognitionTask = nil
     
-    if recognitionTask != nil {
-      recognitionTask?.cancel()
-      recognitionTask = nil
-    }
     
-    let audioSession = AVAudioSession.sharedInstance()
     do {
+      let audioSession = AVAudioSession.sharedInstance()
       try audioSession.setCategory(AVAudioSession.Category.record)
       try audioSession.setMode(AVAudioSession.Mode.measurement)
       try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
     }
-    catch {}
+    catch {
+      print("error: \(error)")
+    }
     
     recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
     
@@ -184,13 +185,9 @@ class TranslationViewController: UIViewController, View {
     do {
       try audioEngine.start()
     }
-    catch {}
+    catch {
+      print("error: \(error)")
+    }
   }
-  
-  
-}
-
-extension TranslationViewController: SFSpeechRecognizerDelegate {
-  
 }
 
