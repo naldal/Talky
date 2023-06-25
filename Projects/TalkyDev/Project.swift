@@ -8,7 +8,9 @@ let project = Project.makeModule(
     .snapkit,
     .reactorkit,
     .rxswift,
+    .alamofire,
     .moya,
+    .rxmoya,
     .TalkyAssets,
     .then,
     .rxflow
