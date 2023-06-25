@@ -91,6 +91,10 @@ final class ListerView: UIView, UITextViewDelegate {
   func setText(text: String?) {
     self.listeningTextView.text = text
   }
+  
+  func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
+    return false
+  }
 
   
   // MARK: - private method

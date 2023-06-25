@@ -49,10 +49,10 @@ class TranslationViewController: UIViewController, View {
   // MARK: - private properties
   
   private let speechRecognizer = SFSpeechRecognizer(locale: Locale.init(identifier: "ko-KR"))
-  private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+  private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest = SFSpeechAudioBufferRecognitionRequest()
   private var recognitionTask: SFSpeechRecognitionTask?
   private let audioEngine = AVAudioEngine()
-  
+  private var utterlyFinished: Bool = true
   
   // MARK: - internal properties
   
@@ -127,6 +127,7 @@ class TranslationViewController: UIViewController, View {
     self.reactor?.pulse { $0.translatedText }
       .observe(on: MainScheduler.instance)
       .subscribe(onNext: { [weak self] translatedText in
+        print(translatedText)
         self?.motherlandListenerView.setText(text: translatedText)
       })
       .disposed(by: self.disposeBag)
@@ -137,14 +138,21 @@ class TranslationViewController: UIViewController, View {
       .asDriver()
       .debounce(.seconds(1))
       .drive(onNext: { [weak self] _ in
+        let feedback = UIImpactFeedbackGenerator(style: .medium)
+        feedback.impactOccurred()
+        guard var utterlyFinished = self?.utterlyFinished else { return }
+        
         if let isRunning = self?.audioEngine.isRunning, isRunning {
           self?.audioEngine.stop()
-          self?.recognitionRequest?.endAudio()
+          self?.recognitionRequest.endAudio()
+          self?.stopListening()
           print("음성인식 중단")
-        } else {
+          self?.recordButton.backgroundColor = .red
+          
+        } else if utterlyFinished == true {
           self?.startRecording()
           print("음성인식 시작")
-          
+          self?.recordButton.backgroundColor = .green
         }
         
       })
@@ -159,9 +167,10 @@ class TranslationViewController: UIViewController, View {
   // MARK: - private method
 
   private func startRecording() {
+
+    self.utterlyFinished = false
     recognitionTask?.cancel()
     recognitionTask = nil
-    
     
     do {
       let audioSession = AVAudioSession.sharedInstance()
@@ -172,43 +181,23 @@ class TranslationViewController: UIViewController, View {
     catch {
       print("error: \(error)")
     }
-    
-    recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-    
-    let inputNode = audioEngine.inputNode
-    
-    guard let recognitionRequest = recognitionRequest else {
-      fatalError("")
-    }
-    
-    recognitionRequest.shouldReportPartialResults = true
-    
-    recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { (result, error) in
-      
-      var isFinal = false
-      
+  
+    self.recognitionRequest.shouldReportPartialResults = true
+
+    self.recognitionTask = self.speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
       if result != nil {
         let convertedVoiceString = result?.bestTranscription.formattedString
-        self.engListenerView.setText(text: convertedVoiceString)
-        self.reactor?.action.onNext(.voiceInput(convertedVoiceString ?? ""))
-        isFinal = (result?.isFinal)!
-      }
-      
-      if isFinal {
-        self.audioEngine.stop()
-        inputNode.removeTap(onBus: 0)
-        
-        self.recognitionRequest = nil
-        self.recognitionTask = nil
+        self?.engListenerView.setText(text: convertedVoiceString)
+        self?.reactor?.action.onNext(.voiceInput(convertedVoiceString ?? ""))
       }
     })
     
-    let recordingFormat = inputNode.outputFormat(forBus: 0)
-    inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, when) in
-      self.recognitionRequest?.append(buffer)
+    let recordingFormat = self.audioEngine.inputNode.outputFormat(forBus: 0)
+    self.audioEngine.inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, when) in
+      self.recognitionRequest.append(buffer)
     }
     
-    audioEngine.prepare()
+    self.audioEngine.prepare()
     
     do {
       try audioEngine.start()
@@ -216,6 +205,13 @@ class TranslationViewController: UIViewController, View {
     catch {
       print("error: \(error)")
     }
+  }
+  
+  private func stopListening() {
+    self.audioEngine.stop()
+    self.audioEngine.inputNode.removeTap(onBus: 0)
+    self.recognitionTask = nil
+    self.utterlyFinished = true
   }
 }
 
