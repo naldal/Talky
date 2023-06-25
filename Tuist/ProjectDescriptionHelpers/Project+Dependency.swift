@@ -8,4 +8,7 @@ public extension TargetDependency {
   static let moya: TargetDependency = .external(name: "Moya")
   static let then: TargetDependency = .external(name: "Then")
   static let TalkyAssets: TargetDependency = .project(target: "TalkyAssets", path: "../TalkyAssets")
+  static let reactorkit: TargetDependency = .external(name: "ReactorKit")
+  static let rxflow: TargetDependency = .external(name: "RxFlow")
+  
 }
