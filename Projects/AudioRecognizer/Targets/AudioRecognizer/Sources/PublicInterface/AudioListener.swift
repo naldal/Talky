@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxSwift
 
 public final class AudioListener {
   
@@ -21,20 +22,21 @@ public final class AudioListener {
 
   // MARK: - private properties
   
+  private let recognizationManger = AudioRecognizerManager.shared
   private(set) var audioListerState: AudioListenerType = .stopped
   
   
   // MARK: - life cycle
   
-  init() {
+  public init() {
     
   }
   
   
   // MARK: - public method
   
-  public func startListen() {
-    
+  public func startListen() -> Observable<Result<Void, AudioRecognizerError>> {
+    return self.recognizationManger.startRecording()
   }
   
   public func stopListen() {

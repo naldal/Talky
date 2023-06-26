@@ -9,11 +9,9 @@ import UIKit
 import SnapKit
 import Then
 import TalkyAssets
-import Speech
 import ReactorKit
 import RxSwift
 import RxCocoa
-import AVFoundation
 
 class TranslationViewController: UIViewController, View {
   
@@ -47,13 +45,7 @@ class TranslationViewController: UIViewController, View {
   
   
   // MARK: - private properties
-  
-  private let speechRecognizer = SFSpeechRecognizer(locale: Locale.init(identifier: "ko-KR"))
-  private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-  private var recognitionTask: SFSpeechRecognitionTask?
-  private let audioEngine = AVAudioEngine()
-  private var utterlyFinished: Bool = true
-  
+    
   // MARK: - internal properties
   
   var disposeBag = DisposeBag()
@@ -124,7 +116,15 @@ class TranslationViewController: UIViewController, View {
     
     // state
     
-    self.reactor?.pulse { $0.translatedText }
+//    reactor.pulse { $0.isRecord }
+//      .skip(1)
+//      .asDriver(onErrorJustReturn: false)
+//      .drive(onNext: { isRecord in
+////        print("is record ~> \(isRecord)")
+//      })
+//      .disposed(by: self.disposeBag)
+    
+    reactor.pulse { $0.translatedText }
       .observe(on: MainScheduler.instance)
       .subscribe(onNext: { [weak self] translatedText in
         print(translatedText)
@@ -134,28 +134,13 @@ class TranslationViewController: UIViewController, View {
     
     // action
     
-    self.recordButton.rx.tap
+    self.recordButton.rx.tap // 얘도 유즈케이스로 보내야함
       .asDriver()
-      .debounce(.seconds(1))
-      .drive(onNext: { [weak self] _ in
-        
-        guard var utterlyFinished = self?.utterlyFinished else { return }
-        
-        if let isRunning = self?.audioEngine.isRunning, isRunning {
-          self?.audioEngine.stop()
-          self?.recognitionRequest.endAudio()
-          self?.stopListening()
-          print("음성인식 중단")
-          self?.recordButton.backgroundColor = .red
-          
-        } else if utterlyFinished == true {
-          self?.startRecording()
-          print("음성인식 시작")
-          self?.recordButton.backgroundColor = .green
-        }
-        
+      .drive(onNext: { _ in
+        reactor.action.onNext(.startRecord)
       })
       .disposed(by: self.disposeBag)
+      
     
     
     
@@ -165,55 +150,5 @@ class TranslationViewController: UIViewController, View {
   
   // MARK: - private method
 
-  private func startRecording() {
-
-    self.utterlyFinished = false
-    recognitionTask?.cancel()
-    recognitionTask = nil
-    
-    do {
-      let audioSession = AVAudioSession.sharedInstance()
-      try audioSession.setCategory(AVAudioSession.Category.record)
-      try audioSession.setMode(AVAudioSession.Mode.measurement)
-      try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-    }
-    catch {
-      print("error: \(error)")
-    }
-  
-    self.recognitionRequest.shouldReportPartialResults = true
-
-    self.recognitionTask = self.speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
-      
-      if result != nil {
-        let convertedVoiceString = result?.bestTranscription.formattedString
-        self?.engListenerView.setText(text: convertedVoiceString)
-        self?.reactor?.action.onNext(.voiceInput(convertedVoiceString ?? ""))
-      }
-    })
-    
-//    self.recognitionTask?.state
-    
-    let recordingFormat = self.audioEngine.inputNode.outputFormat(forBus: 0)
-    self.audioEngine.inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, when) in
-      self.recognitionRequest.append(buffer)
-    }
-    
-    self.audioEngine.prepare()
-    
-    do {
-      try audioEngine.start()
-    }
-    catch {
-      print("error: \(error)")
-    }
-  }
-  
-  private func stopListening() {
-    self.audioEngine.stop()
-    self.audioEngine.inputNode.removeTap(onBus: 0)
-    self.recognitionTask = nil
-    self.utterlyFinished = true
-  }
 }
 

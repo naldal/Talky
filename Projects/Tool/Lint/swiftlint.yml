@@ -17,3 +17,4 @@ disabled_rules:
 - cyclomatic_complexity
 - line_length
 - empty_enum_arguments
+- switch_case_alignment

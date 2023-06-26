@@ -52,7 +52,16 @@ final class TranslationReactor: Reactor {
   func mutate(action: Action) -> Observable<Mutate> {
     switch action {
       case .startRecord:
-        return .just(.setIsRecord(true))
+        return self.startAudioRecognizer()
+          .map { result in
+            switch result {
+              case .success():
+                return .setIsRecord(true)
+              case .failure(let error):
+                return .setIsRecord(false)
+            }
+          }
+          
       case .stopRecord:
         return .just(.setIsRecord(false))
       case .selectForeignLanguage(let foreignLang):
@@ -92,6 +101,10 @@ final class TranslationReactor: Reactor {
   }
   
   // MARK: - private func
+  
+  private func startAudioRecognizer() -> Observable<Result<Void, TalkyError>> {
+    return usecase.startAudioRecognizer()
+  }
   
   private func translate(voiceText: String, targetLanguage: String) -> Observable<Result<TranslationResult, Error>> {
     return usecase.translate(text: voiceText, targetLanguage: targetLanguage)
