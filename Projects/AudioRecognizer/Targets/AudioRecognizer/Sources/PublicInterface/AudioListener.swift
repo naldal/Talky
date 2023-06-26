@@ -35,7 +35,7 @@ public final class AudioListener {
   
   // MARK: - public method
   
-  public func startListen() -> Observable<Result<Void, AudioRecognizerError>> {
+  public func startListen() {
     return self.recognizationManger.startRecording()
   }
   
