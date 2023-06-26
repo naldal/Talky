@@ -14,7 +14,8 @@ let project = Project.makeModule(
     .TalkyAssets,
     .then,
     .rxflow,
-    .swiftyjson
+    .swiftyjson,
+    .audioRecognizer
   ],
   testDependencies: [
     .quick,

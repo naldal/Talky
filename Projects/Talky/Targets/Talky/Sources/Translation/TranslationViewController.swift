@@ -138,8 +138,7 @@ class TranslationViewController: UIViewController, View {
       .asDriver()
       .debounce(.seconds(1))
       .drive(onNext: { [weak self] _ in
-        let feedback = UIImpactFeedbackGenerator(style: .medium)
-        feedback.impactOccurred()
+        
         guard var utterlyFinished = self?.utterlyFinished else { return }
         
         if let isRunning = self?.audioEngine.isRunning, isRunning {
@@ -185,12 +184,15 @@ class TranslationViewController: UIViewController, View {
     self.recognitionRequest.shouldReportPartialResults = true
 
     self.recognitionTask = self.speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
+      
       if result != nil {
         let convertedVoiceString = result?.bestTranscription.formattedString
         self?.engListenerView.setText(text: convertedVoiceString)
         self?.reactor?.action.onNext(.voiceInput(convertedVoiceString ?? ""))
       }
     })
+    
+//    self.recognitionTask?.state
     
     let recordingFormat = self.audioEngine.inputNode.outputFormat(forBus: 0)
     self.audioEngine.inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, when) in
