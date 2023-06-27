@@ -25,16 +25,8 @@ final class TranslationUsecase {
   
   // MARK: - internal method
 
-  func startAudioRecognizer() -> Observable<Result<Void, TalkyError>> {
+  func startAudioRecognizer() {
     return self.audioListenser.startListen()
-      .map { result in
-        switch result {
-          case .success():
-            return .success(())
-          case .failure(let recognizerError):
-            return .failure(TalkyError(.commonError))
-        }
-      }
   }
   
   func translate(text: String, targetLanguage: String) -> Observable<Result<TranslationResult, Error>> {

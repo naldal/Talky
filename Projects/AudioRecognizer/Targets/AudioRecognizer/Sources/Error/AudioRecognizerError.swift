@@ -12,7 +12,7 @@ public class AudioRecognizerError: Error {
   
   // MARK: - error type
   
-  enum ErrorType {
+  public enum ErrorType {
     case recognitionTaskError
     case audioSessionError
     case tapInstallFailed
@@ -37,8 +37,8 @@ public class AudioRecognizerError: Error {
   
   // MARK: - internal properties
   
-  var errorType: ErrorType?
-  var description: String?
+  public var errorType: ErrorType?
+  public var description: String?
   
   
   // MARK: - life cycle

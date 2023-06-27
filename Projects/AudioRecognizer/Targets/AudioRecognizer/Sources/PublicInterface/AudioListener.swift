@@ -40,7 +40,7 @@ public final class AudioListener {
   }
   
   public func stopListen() {
-    
+    return self.recognizationManger.stopRecording()
   }
   
   // MARK: - private method

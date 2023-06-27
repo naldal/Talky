@@ -28,7 +28,7 @@ final class TranslationReactor: Reactor {
   }
   
   struct State {
-    var isRecord: Pulse<Bool> = .init(wrappedValue: false)
+    var isRecord: Pulse<Bool?> = .init(wrappedValue: nil)
     var foreignLanguage: Pulse<String> = .init(wrappedValue: "")
     var motherlandLanguage: Pulse<String> = .init(wrappedValue: "")
     var translatedText: Pulse<String> = .init(wrappedValue: "")
@@ -52,16 +52,8 @@ final class TranslationReactor: Reactor {
   func mutate(action: Action) -> Observable<Mutate> {
     switch action {
       case .startRecord:
-        return self.startAudioRecognizer()
-          .map { result in
-            switch result {
-              case .success():
-                return .setIsRecord(true)
-              case .failure(let error):
-                return .setIsRecord(false)
-            }
-          }
-          
+      self.startAudioRecognizer()
+      return .just(.setIsRecord(true))
       case .stopRecord:
         return .just(.setIsRecord(false))
       case .selectForeignLanguage(let foreignLang):
@@ -102,7 +94,7 @@ final class TranslationReactor: Reactor {
   
   // MARK: - private func
   
-  private func startAudioRecognizer() -> Observable<Result<Void, TalkyError>> {
+  private func startAudioRecognizer() {
     return usecase.startAudioRecognizer()
   }
   

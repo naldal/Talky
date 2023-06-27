@@ -37,4 +37,8 @@ public class TalkyError: Error {
     self.description = type.errorDescription
   }
   
+  init(description: String?) {
+    self.description = description
+  }
+  
 }

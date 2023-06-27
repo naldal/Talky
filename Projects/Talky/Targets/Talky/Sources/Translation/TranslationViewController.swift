@@ -116,13 +116,12 @@ class TranslationViewController: UIViewController, View {
     
     // state
     
-//    reactor.pulse { $0.isRecord }
-//      .skip(1)
-//      .asDriver(onErrorJustReturn: false)
-//      .drive(onNext: { isRecord in
-////        print("is record ~> \(isRecord)")
-//      })
-//      .disposed(by: self.disposeBag)
+    reactor.pulse { $0.isRecord }
+      .compactMap({ $0 })
+      .subscribe(onNext: { isRecord in
+        print("is record ~> \(isRecord)")
+      })
+      .disposed(by: self.disposeBag)
     
     reactor.pulse { $0.translatedText }
       .observe(on: MainScheduler.instance)
