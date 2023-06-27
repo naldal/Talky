@@ -11,6 +11,11 @@ import Foundation
 public class TalkyError: Error {
   
   
+  enum From {
+    case server
+    case own
+  }
+  
   // MARK: - error type
   
   enum ErrorType {
@@ -26,6 +31,7 @@ public class TalkyError: Error {
   
   // MARK: - internal properties
   
+  var errorFrom: From?
   var errorType: ErrorType?
   var description: String?
   
@@ -37,7 +43,8 @@ public class TalkyError: Error {
     self.description = type.errorDescription
   }
   
-  init(description: String?) {
+  init(errorFrom: From, description: String?) {
+    self.errorFrom = errorFrom
     self.description = description
   }
   

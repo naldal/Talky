@@ -45,7 +45,7 @@ final class TranslationUsecase {
   }
   
   
-  func translate(text: String, targetLanguage: String) -> Observable<Result<TranslationResult, Error>> {
+  func translate(text: String, targetLanguage: String) -> Observable<Result<TranslationResult, TalkyError>> {
     return self.repository.tranlsate(sourceText: text, to: targetLanguage)
   }
   

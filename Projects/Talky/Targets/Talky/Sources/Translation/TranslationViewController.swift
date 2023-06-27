@@ -30,11 +30,11 @@ class TranslationViewController: UIViewController, View {
     $0.backgroundColor = Colors.gray.color
   }
   
-  private let engListenerView = ListerView().then {
+  private let voiceListenerView = ListerView().then {
     $0.baseColor = Colors.white.color
   }
   
-  private let motherlandListenerView = ListerView().then {
+  private let translationListenerView = ListerView().then {
     $0.baseColor = Colors.white.color
   }
   
@@ -96,12 +96,12 @@ class TranslationViewController: UIViewController, View {
       make.leading.trailing.equalToSuperview().inset(15)
     }
     
-    self.engListenerView.makeConstraints(baseView: self.baseView) { make in
+    self.voiceListenerView.makeConstraints(baseView: self.baseView) { make in
       make.top.leading.trailing.equalToSuperview()
       make.bottom.equalTo(self.separatorView.snp.top)
     }
     
-    self.motherlandListenerView.makeConstraints(baseView: self.baseView) { make in
+    self.translationListenerView.makeConstraints(baseView: self.baseView) { make in
       make.bottom.leading.trailing.equalToSuperview()
       make.top.equalTo(self.separatorView.snp.bottom)
     }
@@ -113,6 +113,17 @@ class TranslationViewController: UIViewController, View {
   
   func bind(reactor: TranslationReactor) {
     
+    reactor.state.map { $0.error }
+      .compactMap({ $0 })
+      .observe(on: MainScheduler.instance)
+      .subscribe(onNext: { [weak self] error in
+        print(error.description)
+        let alert = UIAlertController(title: error.description, message: nil, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(okAction)
+        self?.present(alert, animated: true, completion: nil)
+      })
+      .disposed(by: self.disposeBag)
     
     // state
     
@@ -138,16 +149,16 @@ class TranslationViewController: UIViewController, View {
     
     reactor.pulse { $0.voiceConvertedText }
       .compactMap({ $0 })
-      .subscribe(onNext: { text in
-        print("converted text ~> \(text)")
+      .subscribe(onNext: { [weak self] text in
+        self?.voiceListenerView.setText(text: text)
+        self?.reactor?.action.onNext(.voiceInput(text))
       })
       .disposed(by: self.disposeBag)
     
     reactor.pulse { $0.translatedText }
       .observe(on: MainScheduler.instance)
       .subscribe(onNext: { [weak self] translatedText in
-        print(translatedText)
-        self?.motherlandListenerView.setText(text: translatedText)
+        self?.translationListenerView.setText(text: translatedText)
       })
       .disposed(by: self.disposeBag)
     
@@ -155,6 +166,7 @@ class TranslationViewController: UIViewController, View {
     
     self.recordButton.rx.tap
       .asDriver()
+      .throttle(.seconds(1))
       .drive(onNext: { _ in
         reactor.action.onNext(.tappedRecord)
       })

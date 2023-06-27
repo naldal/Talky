@@ -12,6 +12,6 @@ import AudioRecognizer
 extension TalkyError {
   
   func toTalkyError(_ error: AudioRecognizerError) -> TalkyError {
-    return .init(description: error.description)
+    return .init(errorFrom: .server, description: error.description)
   }
 }

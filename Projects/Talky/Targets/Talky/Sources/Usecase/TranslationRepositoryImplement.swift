@@ -20,7 +20,7 @@ final class TranslationRepositoryImplement: TranslationRepository {
   
   // MARK: - internal properties
   
-  func tranlsate(sourceText: String, to: String) -> Observable<Result<TranslationResult, Error>> {
+  func tranlsate(sourceText: String, to: String) -> Observable<Result<TranslationResult, TalkyError>> {
     return self.translateAPI.request(target: .translate(apiKey: TalkyInfo.googleClientAPI, sourceText: sourceText, targetLanguage: to))
       .map { result in
         switch result {
@@ -28,10 +28,12 @@ final class TranslationRepositoryImplement: TranslationRepository {
             let jsonData = JSON(data)
             guard let translations = jsonData["data"]["translations"].array,
                   let translationData = try? translations.first?.rawData(),
-                  let translationResult = try? JSONDecoder().decode(TranslationResult.self, from: translationData) else { fatalError("AA") }
+                  let translationResult = try? JSONDecoder().decode(TranslationResult.self, from: translationData) else {
+              return .failure(TalkyError(.commonError))
+            }
             return .success(translationResult)
           case .failure(let error):
-            return .failure(error)
+            return .failure(error.toTalkyError())
         }
       }
     
