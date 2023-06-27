@@ -116,10 +116,30 @@ class TranslationViewController: UIViewController, View {
     
     // state
     
-    reactor.pulse { $0.isRecord }
+    reactor.pulse { $0.recognitionState }
       .compactMap({ $0 })
-      .subscribe(onNext: { isRecord in
-        print("is record ~> \(isRecord)")
+      .subscribe(onNext: { state in
+        switch state {
+          case .starting:
+            print("starting")
+          case .running:
+            print("running")
+          case .finishing:
+            print("finishing")
+          case .canceling:
+            print("canceling")
+          case .completed:
+            print("completed")
+          @unknown default:
+            break
+        }
+      })
+      .disposed(by: self.disposeBag)
+    
+    reactor.pulse { $0.voiceConvertedText }
+      .compactMap({ $0 })
+      .subscribe(onNext: { text in
+        print("converted text ~> \(text)")
       })
       .disposed(by: self.disposeBag)
     
@@ -133,10 +153,10 @@ class TranslationViewController: UIViewController, View {
     
     // action
     
-    self.recordButton.rx.tap // 얘도 유즈케이스로 보내야함
+    self.recordButton.rx.tap
       .asDriver()
       .drive(onNext: { _ in
-        reactor.action.onNext(.startRecord)
+        reactor.action.onNext(.tappedRecord)
       })
       .disposed(by: self.disposeBag)
       

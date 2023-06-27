@@ -8,12 +8,12 @@
 
 import UIKit
 import ReactorKit
+import Speech
 
 final class TranslationReactor: Reactor {
   
   enum Action {
-    case startRecord
-    case stopRecord
+    case tappedRecord
     case selectForeignLanguage(String)
     case selectMotherLandLanguage(String)
     case voiceInput(String)
@@ -21,14 +21,18 @@ final class TranslationReactor: Reactor {
   
   enum Mutate {
     case empty
-    case setIsRecord(Bool)
+    case setRecognitionState(SFSpeechRecognitionTaskState?)
+    case setVoiceConvertedText(String?)
+    
     case setForeignLanguage(String)
     case setMotherLandLanguage(String)
     case setTranslatedText(String)
   }
   
   struct State {
-    var isRecord: Pulse<Bool?> = .init(wrappedValue: nil)
+    var recognitionState: Pulse<SFSpeechRecognitionTaskState?> = .init(wrappedValue: nil)
+    var voiceConvertedText: Pulse<String?> = .init(wrappedValue: nil)
+    
     var foreignLanguage: Pulse<String> = .init(wrappedValue: "")
     var motherlandLanguage: Pulse<String> = .init(wrappedValue: "")
     var translatedText: Pulse<String> = .init(wrappedValue: "")
@@ -51,15 +55,29 @@ final class TranslationReactor: Reactor {
   
   func mutate(action: Action) -> Observable<Mutate> {
     switch action {
-      case .startRecord:
-      self.startAudioRecognizer()
-      return .just(.setIsRecord(true))
-      case .stopRecord:
-        return .just(.setIsRecord(false))
+      case .tappedRecord:
+        if self.currentState.recognitionState.value == .running {
+          self.stopAudioRecognizer()
+        }
+        if self.currentState.recognitionState.value == nil {
+          self.startAudioRecognizer()
+        }
+        let stateMutation = self.listenRecognizerState().map {
+          return Mutate.setRecognitionState($0)
+        }
+        let textMutation = self.listenConvertedText().map { text in
+          print("text : \(String(describing: text))")
+          return Mutate.setVoiceConvertedText(text)
+        }
+        
+        return Observable.merge(stateMutation, textMutation)
+        
       case .selectForeignLanguage(let foreignLang):
         return .just(.setForeignLanguage(foreignLang))
+        
       case .selectMotherLandLanguage(let motherlandLang):
         return .just(.setMotherLandLanguage(motherlandLang))
+        
       case .voiceInput(let voice):
         // TODO: remove "en" but make set the target language later
         return self.translate(voiceText: voice, targetLanguage: "en")
@@ -80,14 +98,16 @@ final class TranslationReactor: Reactor {
     switch mutation {
       case .empty:
         break
-      case .setIsRecord(let isRecord):
-        newState.isRecord.value = isRecord
+      case .setRecognitionState(let state):
+        newState.recognitionState.value = state
       case .setForeignLanguage(let foreignLanguage):
         newState.foreignLanguage.value = foreignLanguage
       case .setMotherLandLanguage(let motherlandLanguage):
         newState.motherlandLanguage.value = motherlandLanguage
       case .setTranslatedText(let translatedText):
         newState.translatedText.value = translatedText
+      case .setVoiceConvertedText(let convertedText):
+        newState.voiceConvertedText.value = convertedText
     }
     return newState
   }
@@ -96,6 +116,18 @@ final class TranslationReactor: Reactor {
   
   private func startAudioRecognizer() {
     return usecase.startAudioRecognizer()
+  }
+  
+  private func stopAudioRecognizer() {
+    return usecase.stopAudioRecognizer()
+  }
+  
+  private func listenRecognizerState() -> Observable<SFSpeechRecognitionTaskState?> {
+    return usecase.listenRecognizerState()
+  }
+  
+  private func listenConvertedText() -> Observable<String?> {
+    return usecase.listenConvertedText()
   }
   
   private func translate(voiceText: String, targetLanguage: String) -> Observable<Result<TranslationResult, Error>> {

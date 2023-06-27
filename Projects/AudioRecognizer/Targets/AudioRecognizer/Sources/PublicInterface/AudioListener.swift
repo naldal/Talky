@@ -7,6 +7,8 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
+import Speech
 
 public final class AudioListener {
   
@@ -18,8 +20,11 @@ public final class AudioListener {
   }
   
   // MARK: - public properties
-  
 
+  public let stateObservable: BehaviorSubject<SFSpeechRecognitionTaskState?> = .init(value: nil)
+  public let convertedTextObservable: BehaviorSubject<String?> = .init(value: nil)
+  
+  
   // MARK: - private properties
   
   private let recognizationManger = AudioRecognizerManager.shared
@@ -29,9 +34,11 @@ public final class AudioListener {
   // MARK: - life cycle
   
   public init() {
-    
+    self.listenState()
+    self.listenConvertedText()
   }
   
+  let disposeBag = DisposeBag()
   
   // MARK: - public method
   
@@ -41,6 +48,19 @@ public final class AudioListener {
   
   public func stopListen() {
     return self.recognizationManger.stopRecording()
+  }
+  
+  
+  public func listenState() {
+    self.recognizationManger.recognizeTaskStatus
+      .bind(to: self.stateObservable)
+      .disposed(by: self.disposeBag)
+  }
+  
+  public func listenConvertedText() {
+    self.recognizationManger.recognizedTextSubject
+      .bind(to: self.convertedTextObservable)
+      .disposed(by: self.disposeBag)
   }
   
   // MARK: - private method

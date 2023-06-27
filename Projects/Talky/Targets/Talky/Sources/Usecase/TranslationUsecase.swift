@@ -9,6 +9,7 @@
 import Foundation
 import RxSwift
 import AudioRecognizer
+import Speech
 
 final class TranslationUsecase {
   
@@ -17,17 +18,32 @@ final class TranslationUsecase {
   private let repository: TranslationRepository
   private let audioListenser: AudioListener = AudioListener()
   
+  
   // MARK: - life cycle
   
   init(repository: TranslationRepository) {
     self.repository = repository
   }
   
+  
   // MARK: - internal method
 
   func startAudioRecognizer() {
     return self.audioListenser.startListen()
   }
+  
+  func stopAudioRecognizer() {
+    return self.audioListenser.stopListen()
+  }
+  
+  func listenRecognizerState() -> Observable<SFSpeechRecognitionTaskState?> {
+    return self.audioListenser.stateObservable
+  }
+  
+  func listenConvertedText() -> Observable<String?> {
+    return self.audioListenser.convertedTextObservable
+  }
+  
   
   func translate(text: String, targetLanguage: String) -> Observable<Result<TranslationResult, Error>> {
     return self.repository.tranlsate(sourceText: text, to: targetLanguage)
