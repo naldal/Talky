@@ -17,7 +17,10 @@ final class ListerView: UIView, UITextViewDelegate {
   // MARK: - components
   
   private let baseView = UIView().then {
-    $0.backgroundColor = .clear
+    $0.layer.cornerRadius = 15
+    $0.layer.borderColor = Colors.brown.color.cgColor
+    $0.layer.borderWidth = 1.0
+    $0.backgroundColor = Colors.white.color
   }
   
   private lazy var listeningTextView = UITextView().then {
@@ -31,13 +34,7 @@ final class ListerView: UIView, UITextViewDelegate {
   }
   
   // MARK: - internal properties
-  
-  var baseColor: UIColor? {
-    didSet {
-      self.setBaseViewColor(color: baseColor)
-    }
-  }
-  
+ 
   // MARK: - internal properties
   
   // MARK: - private properties
@@ -98,10 +95,6 @@ final class ListerView: UIView, UITextViewDelegate {
 
   
   // MARK: - private method
-  
-  private func setBaseViewColor(color: UIColor?) {
-    self.baseView.backgroundColor = color ?? Colors.white.color
-  }
   
   
 }

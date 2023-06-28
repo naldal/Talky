@@ -1,5 +1,5 @@
 //
-//  TranslationReactor.swift
+//  MainReactor.swift
 //  Talky
 //
 //  Created by 송하민 on 2023/06/25.
@@ -10,7 +10,7 @@ import UIKit
 import ReactorKit
 import Speech
 
-final class TranslationReactor: Reactor {
+final class MainReactor: Reactor {
   
   enum Action {
     case tappedRecord

@@ -17,9 +17,10 @@ extension TargetScript {
   }
   
   static var lint: TargetScript {
-    return self.makeScript(order: .pre,
-                           scriptPath: "../Tool/Lint/swiftlint --config \"../Tool/Lint/swiftlint.yml\"",
-                           name: "Lint"
+    return self.makeScript(
+      order: .pre,
+      scriptPath: "../Tool/Lint/swiftlint --config \"../Tool/Lint/swiftlint.yml\"",
+      name: "Lint"
     )
   }
 }

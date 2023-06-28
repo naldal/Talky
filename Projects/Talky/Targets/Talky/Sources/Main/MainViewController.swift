@@ -1,5 +1,5 @@
 //
-//  TranslationViewController.swift
+//  MainViewController.swift
 //  Talky
 //
 //  Created by 송하민 on 2023/06/24.
@@ -13,13 +13,13 @@ import ReactorKit
 import RxSwift
 import RxCocoa
 
-class TranslationViewController: UIViewController, View {
+class MainViewController: UIViewController, View {
   
   
   // MARK: - components
   
   private let backgroundView = UIView().then {
-    $0.backgroundColor = Colors.brown.color
+    $0.backgroundColor = Colors.gray.color
   }
   
   private let baseView = UIView().then {
@@ -30,14 +30,8 @@ class TranslationViewController: UIViewController, View {
     $0.backgroundColor = Colors.gray.color
   }
   
-  private let voiceListenerView = ListerView().then {
-    $0.baseColor = Colors.white.color
-  }
-  
-  private let translationListenerView = ListerView().then {
-    $0.baseColor = Colors.white.color
-  }
-  
+  private let voiceListenerView = ListerView()
+  private let translationListenerView = ListerView()
   private let recordButton = UIButton().then {
     $0.backgroundColor = .red
     $0.layer.cornerRadius = 30
@@ -53,7 +47,7 @@ class TranslationViewController: UIViewController, View {
   
   // MARK: - life cycle
   
-  init(reactor: TranslationReactor) {
+  init(reactor: MainReactor) {
     super.init(nibName: nil, bundle: nil)
     self.reactor = reactor
   }
@@ -80,30 +74,33 @@ class TranslationViewController: UIViewController, View {
       make.edges.equalToSuperview()
     }
     
-    self.separatorView.makeConstraints(baseView: self.backgroundView) { make in
-      make.centerY.leading.trailing.equalToSuperview()
-      make.height.equalTo(15)
-    }
-    
     self.recordButton.makeConstraints(baseView: self.backgroundView) { make in
-      make.centerX.centerY.equalToSuperview()
+      let safeGuide = self.view.safeAreaLayoutGuide
+      make.centerX.equalToSuperview()
       make.width.height.equalTo(60)
+      make.bottom.equalTo(safeGuide)
     }
     
     self.baseView.makeConstraints(baseView: self.backgroundView) { make in
       let safeGuide = self.view.safeAreaLayoutGuide
-      make.top.bottom.equalTo(safeGuide)
+      make.top.equalTo(safeGuide)
+      make.bottom.equalTo(self.recordButton.snp.top).offset(-12)
       make.leading.trailing.equalToSuperview().inset(15)
+    }
+    
+    self.separatorView.makeConstraints(baseView: self.baseView) { make in
+      make.centerY.leading.trailing.equalToSuperview()
+      make.height.equalTo(1)
     }
     
     self.voiceListenerView.makeConstraints(baseView: self.baseView) { make in
       make.top.leading.trailing.equalToSuperview()
-      make.bottom.equalTo(self.separatorView.snp.top)
+      make.bottom.equalTo(self.separatorView.snp.top).offset(6)
     }
     
     self.translationListenerView.makeConstraints(baseView: self.baseView) { make in
       make.bottom.leading.trailing.equalToSuperview()
-      make.top.equalTo(self.separatorView.snp.bottom)
+      make.top.equalTo(self.separatorView.snp.bottom).offset(6)
     }
     
     self.backgroundView.bringSubviewToFront(self.recordButton)
@@ -111,13 +108,12 @@ class TranslationViewController: UIViewController, View {
   
   // MARK: - bind
   
-  func bind(reactor: TranslationReactor) {
+  func bind(reactor: MainReactor) {
     
     reactor.state.map { $0.error }
       .compactMap({ $0 })
       .observe(on: MainScheduler.instance)
       .subscribe(onNext: { [weak self] error in
-        print(error.description)
         let alert = UIAlertController(title: error.description, message: nil, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         alert.addAction(okAction)
@@ -149,6 +145,7 @@ class TranslationViewController: UIViewController, View {
     
     reactor.pulse { $0.voiceConvertedText }
       .compactMap({ $0 })
+      .observe(on: MainScheduler.instance)
       .subscribe(onNext: { [weak self] text in
         self?.voiceListenerView.setText(text: text)
         self?.reactor?.action.onNext(.voiceInput(text))

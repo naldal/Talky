@@ -24,7 +24,7 @@ public class TalkyError: Error {
     var errorDescription: String {
       switch self {
         case .commonError:
-          return "just error"
+          return "just an error"
       }
     }
   }
