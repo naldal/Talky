@@ -101,6 +101,10 @@ final class ListerView: UIView {
     self.listeningTextView.attributedText = attributedString
   }
   
+  func clearTextView() {
+    self.listeningTextView.text = ""
+  }
+  
   // MARK: - private method
   
   private func checkIsScrollTouchBottom() -> Bool {

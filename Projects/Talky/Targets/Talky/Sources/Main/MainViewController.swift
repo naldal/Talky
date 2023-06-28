@@ -32,10 +32,7 @@ class MainViewController: UIViewController, View {
   
   private let voiceListenerView = ListerView()
   private let translationListenerView = ListerView()
-  private let recordButton = UIButton().then {
-    $0.backgroundColor = .red
-    $0.layer.cornerRadius = 28
-  }
+  private let recordButton = RecordButtonView()
   
   
   // MARK: - private properties
@@ -77,7 +74,8 @@ class MainViewController: UIViewController, View {
     self.recordButton.makeConstraints(baseView: self.backgroundView) { make in
       let safeGuide = self.view.safeAreaLayoutGuide
       make.centerX.equalToSuperview()
-      make.width.height.equalTo(60)
+      make.height.equalTo(60)
+      make.width.equalTo(100)
       make.bottom.equalTo(safeGuide)
     }
     
@@ -126,18 +124,14 @@ class MainViewController: UIViewController, View {
     
     reactor.pulse { $0.recognitionState }
       .compactMap({ $0 })
-      .subscribe(onNext: { state in
+      .subscribe(onNext: { [weak self] state in
         switch state {
-          case .starting:
-            print("starting")
-          case .running:
-            print("running")
-          case .finishing:
-            print("finishing")
-          case .canceling:
-            print("canceling")
-          case .completed:
-            print("completed")
+          case .starting, .running:
+            self?.recordButton.state = .start
+          case .canceling, .finishing, .completed:
+            self?.recordButton.state = .end
+            self?.voiceListenerView.clearTextView()
+            self?.translationListenerView.clearTextView()
           @unknown default:
             break
         }
@@ -162,7 +156,7 @@ class MainViewController: UIViewController, View {
     
     // action
     
-    self.recordButton.rx.tap
+    self.recordButton.rx.didTap
       .asDriver()
       .throttle(.seconds(1))
       .drive(onNext: { _ in

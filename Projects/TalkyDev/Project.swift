@@ -16,7 +16,8 @@ let project = Project.makeModule(
     .then,
     .rxflow,
     .swiftyjson,
-    .audioRecognizer
+    .audioRecognizer,
+    .lottie
   ],
   testDependencies: [
     .quick,

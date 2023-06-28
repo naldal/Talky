@@ -80,9 +80,13 @@ final class MainReactor: Reactor {
       case .voiceInput(let voice):
         // TODO: remove "en" but make set the target language later
         return self.translate(voiceText: voice, targetLanguage: "en")
-          .map({ result in
+          .map({ [weak self] result in
             switch result {
               case .success(let translateResult):
+                let currentRecordState = self?.currentState.recognitionState.value
+                guard currentRecordState == .running else {
+                  return .empty
+                }
                 return .setTranslatedText(translateResult.translatedText)
               case .failure(let error):
                 print(error)

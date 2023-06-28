@@ -15,4 +15,6 @@ public extension TargetDependency {
   static let rxflow: TargetDependency = .external(name: "RxFlow")
   static let swiftyjson: TargetDependency = .external(name: "SwiftyJSON")
   static let audioRecognizer: TargetDependency = .project(target: "AudioRecognizer", path: "../AudioRecognizer")
+  static let lottie: TargetDependency = .external(name: "Lottie")
+  
 }
