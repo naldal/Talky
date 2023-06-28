@@ -34,6 +34,11 @@ final class ListerView: UIView {
     $0.delegate = self
   }
   
+  private let languageLabel = UILabel().then {
+    $0.font = UIFont.font(fonts: .regular, fontSize: 20)
+    $0.textColor = .black
+  }
+  
   // MARK: - internal properties
  
   // MARK: - internal properties
@@ -67,6 +72,10 @@ final class ListerView: UIView {
     self.listeningTextView.makeConstraints(baseView: self.baseView) { make in
       make.edges.equalToSuperview()
     }
+    
+    self.languageLabel.makeConstraints(baseView: self.baseView) { make in
+      make.bottom.trailing.equalToSuperview().inset(15)
+    }
   }
   
   // MARK: - bind
@@ -98,11 +107,22 @@ final class ListerView: UIView {
         NSAttributedString.Key.font: UIFont.font(fonts: .extrabold, fontSize: 32)
       ]
     )
+    self.listeningTextView.textColor = .black
     self.listeningTextView.attributedText = attributedString
   }
   
   func clearTextView() {
     self.listeningTextView.text = ""
+  }
+  
+  func setPlaceholder(text placeholder: String) {
+    self.listeningTextView.textColor = .gray
+    self.listeningTextView.font = .font(fonts: .bold, fontSize: 30)
+    self.listeningTextView.text = placeholder
+  }
+  
+  func setLanguage(lang: String) {
+    self.languageLabel.text = lang
   }
   
   // MARK: - private method

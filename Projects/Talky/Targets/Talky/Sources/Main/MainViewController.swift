@@ -30,8 +30,14 @@ class MainViewController: UIViewController, View {
     $0.backgroundColor = Colors.primary.color
   }
   
-  private let voiceListenerView = ListerView()
-  private let translationListenerView = ListerView()
+  private let voiceListenerView = ListerView().then {
+    $0.setPlaceholder(text: "마이크를 켜주세요")
+    $0.setLanguage(lang: "한국어")
+  }
+  private let translationListenerView = ListerView().then {
+    $0.setPlaceholder(text: "번역 준비 중")
+    $0.setLanguage(lang: "English")
+  }
   private let recordButton = RecordButtonView()
   
   
@@ -128,10 +134,10 @@ class MainViewController: UIViewController, View {
         switch state {
           case .starting, .running:
             self?.recordButton.state = .start
+            self?.voiceListenerView.setPlaceholder(text: "듣고있습니다...")
+            self?.translationListenerView.setPlaceholder(text: "번역 준비 완료")
           case .canceling, .finishing, .completed:
             self?.recordButton.state = .end
-            self?.voiceListenerView.clearTextView()
-            self?.translationListenerView.clearTextView()
           @unknown default:
             break
         }
@@ -148,6 +154,7 @@ class MainViewController: UIViewController, View {
       .disposed(by: self.disposeBag)
     
     reactor.pulse { $0.translatedText }
+      .skip(1)
       .observe(on: MainScheduler.instance)
       .subscribe(onNext: { [weak self] translatedText in
         self?.translationListenerView.setText(text: translatedText)
