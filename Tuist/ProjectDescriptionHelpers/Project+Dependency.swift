@@ -5,6 +5,7 @@ public extension TargetDependency {
   static let nimble: TargetDependency = .external(name: "Nimble")
   static let snapkit: TargetDependency = .external(name: "SnapKit")
   static let rxswift: TargetDependency = .external(name: "RxSwift")
+  static let rxcocoa: TargetDependency = .external(name: "RxCocoa")
   static let alamofire: TargetDependency = .external(name: "Alamofire")
   static let moya: TargetDependency = .external(name: "Moya")
   static let rxmoya: TargetDependency = .external(name: "RxMoya")

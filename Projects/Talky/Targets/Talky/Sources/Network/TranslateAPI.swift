@@ -40,6 +40,7 @@ extension TranslateAPI: TargetType {
           var returnBodyParams: [String: Any] = [:]
           returnBodyParams["q"] = sourceText
           returnBodyParams["target"] = targetLanguage
+          returnBodyParams["format"] = "text"
           return returnBodyParams
         }()
         let apiKeyParam: [String: String] = ["key": apiKey]

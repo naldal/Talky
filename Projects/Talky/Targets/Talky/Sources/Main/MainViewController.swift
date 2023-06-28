@@ -19,7 +19,7 @@ class MainViewController: UIViewController, View {
   // MARK: - components
   
   private let backgroundView = UIView().then {
-    $0.backgroundColor = Colors.gray.color
+    $0.backgroundColor = Colors.primary.color
   }
   
   private let baseView = UIView().then {
@@ -27,14 +27,14 @@ class MainViewController: UIViewController, View {
   }
   
   private let separatorView = UIView().then {
-    $0.backgroundColor = Colors.gray.color
+    $0.backgroundColor = Colors.primary.color
   }
   
   private let voiceListenerView = ListerView()
   private let translationListenerView = ListerView()
   private let recordButton = UIButton().then {
     $0.backgroundColor = .red
-    $0.layer.cornerRadius = 30
+    $0.layer.cornerRadius = 28
   }
   
   
@@ -83,9 +83,9 @@ class MainViewController: UIViewController, View {
     
     self.baseView.makeConstraints(baseView: self.backgroundView) { make in
       let safeGuide = self.view.safeAreaLayoutGuide
-      make.top.equalTo(safeGuide)
+      make.top.equalTo(safeGuide).offset(24)
       make.bottom.equalTo(self.recordButton.snp.top).offset(-12)
-      make.leading.trailing.equalToSuperview().inset(15)
+      make.leading.trailing.equalToSuperview().inset(16)
     }
     
     self.separatorView.makeConstraints(baseView: self.baseView) { make in
@@ -95,12 +95,13 @@ class MainViewController: UIViewController, View {
     
     self.voiceListenerView.makeConstraints(baseView: self.baseView) { make in
       make.top.leading.trailing.equalToSuperview()
-      make.bottom.equalTo(self.separatorView.snp.top).offset(6)
+      make.bottom.equalTo(self.separatorView.snp.top).offset(-16)
     }
     
     self.translationListenerView.makeConstraints(baseView: self.baseView) { make in
-      make.bottom.leading.trailing.equalToSuperview()
-      make.top.equalTo(self.separatorView.snp.bottom).offset(6)
+      make.top.equalTo(self.separatorView.snp.bottom).offset(16)
+      make.leading.trailing.equalToSuperview()
+      make.bottom.equalToSuperview().inset(8)
     }
     
     self.backgroundView.bringSubviewToFront(self.recordButton)

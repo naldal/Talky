@@ -19,6 +19,7 @@ let dependencies = Dependencies(
     "SnapKit": .staticFramework,
     "Alamofire": .staticFramework,
     "RxSwift": .staticFramework,
+    "RxCocoa": .staticFramework,
     "Moya": .staticFramework,
     "Then": .staticFramework,
     "ReactorKit": .staticFramework,

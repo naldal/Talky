@@ -8,21 +8,24 @@
 
 import UIKit
 
-public typealias JetBrainsFont = TalkyAssetsFontFamily.JetBrainsMono
+public typealias NanumSquareRound = TalkyAssetsFontFamily.NanumSquareRoundOTF
 
-public enum JetBrainMonoFontType {
-  case medium
+public enum NanumSquareRoundType {
+  case regular
   case bold
+  case extrabold
 }
 
 extension UIFont {
   
-  public static func font(fonts: JetBrainMonoFontType, fontSize: CGFloat) -> UIFont {
+  public static func font(fonts: NanumSquareRoundType, fontSize: CGFloat) -> UIFont {
     switch fonts {
-    case .medium:
-        return JetBrainsFont.medium.font(size: fontSize)
+    case .regular:
+        return NanumSquareRound.regular.font(size: fontSize)
     case .bold:
-        return JetBrainsFont.bold.font(size: fontSize)
+        return NanumSquareRound.bold.font(size: fontSize)
+      case .extrabold:
+        return NanumSquareRound.extraBold.font(size: fontSize)
     }
   }
 }

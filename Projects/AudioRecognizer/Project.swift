@@ -15,7 +15,10 @@ let project = Project(
     name: projectName,
     baseBundleId: "framework.AudioRecognizer.talky",
     customInfoPlist: .default,
-    dependencies: [.rxswift],
+    dependencies: [
+      .rxswift,
+      .rxcocoa
+    ],
     testDependencies: []
   )
 )

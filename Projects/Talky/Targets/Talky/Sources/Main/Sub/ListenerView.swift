@@ -12,24 +12,25 @@ import TalkyAssets
 import RxSwift
 import RxCocoa
 
-final class ListerView: UIView, UITextViewDelegate {
+final class ListerView: UIView {
   
   // MARK: - components
   
   private let baseView = UIView().then {
-    $0.layer.cornerRadius = 15
-    $0.layer.borderColor = Colors.brown.color.cgColor
-    $0.layer.borderWidth = 1.0
-    $0.backgroundColor = Colors.white.color
+    $0.layer.masksToBounds = true
+    $0.layer.cornerRadius = 20
+    $0.layer.borderColor = Colors.secondary.color.cgColor
+    $0.layer.borderWidth = 8.0
+    $0.backgroundColor = .clear
   }
   
   private lazy var listeningTextView = UITextView().then {
+    $0.textContainerInset = .init(top: 24, left: 24, bottom: 48, right: 24)
     $0.textContainer.lineBreakMode = .byCharWrapping
     $0.textContainer.maximumNumberOfLines = 0
     $0.isScrollEnabled = true
     $0.textAlignment = .left
     $0.adjustsFontForContentSizeCategory = true
-    $0.font = .font(fonts: .bold, fontSize: 38)
     $0.delegate = self
   }
   
@@ -64,8 +65,7 @@ final class ListerView: UIView, UITextViewDelegate {
     }
     
     self.listeningTextView.makeConstraints(baseView: self.baseView) { make in
-      make.leading.trailing.equalToSuperview()
-      make.top.bottom.equalToSuperview().inset(20)
+      make.edges.equalToSuperview()
     }
   }
   
@@ -75,9 +75,12 @@ final class ListerView: UIView, UITextViewDelegate {
     self.listeningTextView.rx.text
       .asDriver()
       .drive(onNext: { [weak self] text in
-        guard let textCount = text?.count,
-              textCount >= 1 else { return }
+        guard let textCount = text?.count, textCount >= 1 else { return }
         self?.listeningTextView.scrollRangeToVisible(NSRange(location: textCount - 1, length: 1))
+        guard let isTouched = self?.checkIsScrollTouchBottom(), isTouched else {
+          self?.makeTouchScrollView()
+          return
+        }
       })
       .disposed(by: self.disposeBag)
   }
@@ -86,15 +89,35 @@ final class ListerView: UIView, UITextViewDelegate {
   // MARK: - internal method
   
   func setText(text: String?) {
-    self.listeningTextView.text = text
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.lineSpacing = 12
+    let attributedString = NSAttributedString(
+      string: text ?? "",
+      attributes: [
+        NSAttributedString.Key.paragraphStyle: paragraphStyle,
+        NSAttributedString.Key.font: UIFont.font(fonts: .extrabold, fontSize: 32)
+      ]
+    )
+    self.listeningTextView.attributedText = attributedString
   }
+  
+  // MARK: - private method
+  
+  private func checkIsScrollTouchBottom() -> Bool {
+    let bottomEdge = listeningTextView.contentOffset.y + listeningTextView.bounds.size.height
+     return bottomEdge >= listeningTextView.contentSize.height
+  }
+
+  private func makeTouchScrollView() {
+    let bottomOffset = CGPoint(x: 0, y: listeningTextView.contentSize.height - listeningTextView.bounds.size.height + listeningTextView.contentInset.bottom)
+    self.listeningTextView.setContentOffset(bottomOffset, animated: true)
+  }
+}
+
+extension ListerView: UITextViewDelegate {
   
   func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
     return false
   }
-
-  
-  // MARK: - private method
-  
   
 }

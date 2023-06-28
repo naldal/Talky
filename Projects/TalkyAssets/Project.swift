@@ -20,7 +20,8 @@ let project = Project(
   resourceSynthesizers: [
     .assets(),
     .fonts(),
-    .strings()
+    .strings(),
+    .custom(name: "Lottie", parser: .json, extensions: ["lottie"])
   ]
 )
 
