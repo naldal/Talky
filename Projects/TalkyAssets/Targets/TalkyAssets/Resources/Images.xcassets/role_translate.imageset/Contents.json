@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "role_translate.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -14,6 +14,12 @@ import RxCocoa
 
 final class ListerView: UIView {
   
+  enum Role {
+    case speaker
+    case translator
+  }
+  
+  
   // MARK: - components
   
   private let baseView = UIView().then {
@@ -34,14 +40,17 @@ final class ListerView: UIView {
     $0.delegate = self
   }
   
-  private let languageLabel = UILabel().then {
-    $0.font = UIFont.font(fonts: .regular, fontSize: 16)
-    $0.textColor = .black
-  }
+  private let roleImageView = UIImageView()
   
   // MARK: - internal properties
- 
-  // MARK: - internal properties
+  
+  var role: Role? {
+    didSet {
+      guard let role = role else { return }
+      self.setRoleImage(role: role)
+    }
+  }
+  
   
   // MARK: - private properties
   
@@ -73,10 +82,12 @@ final class ListerView: UIView {
       make.edges.equalToSuperview()
     }
     
-    self.languageLabel.makeConstraints(baseView: self.baseView) { make in
+    self.roleImageView.makeConstraints(baseView: self.baseView) { make in
+      make.width.height.equalTo(26)
       make.bottom.trailing.equalToSuperview().inset(12)
     }
   }
+  
   
   // MARK: - bind
   
@@ -121,8 +132,13 @@ final class ListerView: UIView {
     self.listeningTextView.text = placeholder
   }
   
-  func setLanguage(lang: String) {
-    self.languageLabel.text = lang
+  private func setRoleImage(role: Role) {
+    switch role {
+      case .speaker:
+        self.roleImageView.image = Images.roleSpeaker.image
+      case .translator:
+        self.roleImageView.image = Images.roleTranslate.image
+    }
   }
   
   // MARK: - private method

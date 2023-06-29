@@ -72,13 +72,13 @@ class MainViewController: UIViewController, View {
     $0.backgroundColor = .clear
   }
   
-  private let voiceListenerView = ListerView().then {
+  private let voiceReconitionView = ListerView().then {
+    $0.role = .speaker
     $0.setPlaceholder(text: "마이크를 켜주세요")
-    $0.setLanguage(lang: "한국어")
   }
   private let translationListenerView = ListerView().then {
+    $0.role = .translator
     $0.setPlaceholder(text: "번역 준비 중")
-    $0.setLanguage(lang: "English")
   }
   
   private let recordButton = RecordButtonView()
@@ -140,7 +140,7 @@ class MainViewController: UIViewController, View {
       make.height.equalTo(30)
     }
     
-    self.voiceListenerView.makeConstraints(baseView: self.baseView) { make in
+    self.voiceReconitionView.makeConstraints(baseView: self.baseView) { make in
       make.top.leading.trailing.equalToSuperview()
       make.bottom.equalTo(self.separatorView.snp.top)
     }
@@ -193,7 +193,7 @@ class MainViewController: UIViewController, View {
         switch state {
           case .starting, .running:
             self?.recordButton.state = .start
-            self?.voiceListenerView.setPlaceholder(text: "듣고 있습니다...")
+            self?.voiceReconitionView.setPlaceholder(text: "듣고 있습니다...")
             self?.translationListenerView.setPlaceholder(text: "번역 준비 완료")
           case .canceling, .finishing, .completed:
             self?.recordButton.state = .end
@@ -208,7 +208,7 @@ class MainViewController: UIViewController, View {
       .observe(on: MainScheduler.instance)
       .subscribe(onNext: { [weak self] text in
         guard !text.isEmpty else { return }
-        self?.voiceListenerView.setText(text: text)
+        self?.voiceReconitionView.setText(text: text)
         self?.reactor?.action.onNext(.voiceInput(text))
       })
       .disposed(by: self.disposeBag)
