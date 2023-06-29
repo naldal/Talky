@@ -1,0 +1,10 @@
+/* 
+  InfoPlist.strings
+  Talky
+
+  Created by 송하민 on 2023/06/30.
+  Copyright © 2023 TeamTalky. All rights reserved.
+*/
+
+"Privacy_Microphone_Usage"="Please allow the app to access the microphone. This is an essential procedure to activate the voice recognition function with your voice so that you can use the main functions of the app..";
+"Privacy_Speech_Recognition"="Please allow the app to access voice recognition. You can activate the translation function by using the voice recognition function.";

@@ -1,0 +1,14 @@
+/* 
+  Localizable.strings
+  TalkyAssets
+
+  Created by 송하민 on 2023/06/30.
+  
+*/
+
+"Common_OK"="OK";
+
+"Main_Ask_Turn_On_Microphone"="마이크를 켜주세요";
+"Main_Prepareing_For_Translation"="번역 준비 중";
+"Main_Listening"="듣고 있습니다...";
+"Main_Ready_For_Translation"="번역 준비 완료";

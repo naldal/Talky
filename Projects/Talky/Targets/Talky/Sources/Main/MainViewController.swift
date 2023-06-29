@@ -74,11 +74,11 @@ class MainViewController: UIViewController, View {
   
   private let voiceReconitionView = ListerView().then {
     $0.role = .speaker
-    $0.setPlaceholder(text: "마이크를 켜주세요")
+    $0.setPlaceholder(text: L10n.mainAskTurnOnMicrophone)
   }
   private let translationListenerView = ListerView().then {
     $0.role = .translator
-    $0.setPlaceholder(text: "번역 준비 중")
+    $0.setPlaceholder(text: L10n.mainPrepareingForTranslation)
   }
   
   private let recordButton = RecordButtonView()
@@ -179,7 +179,7 @@ class MainViewController: UIViewController, View {
       .observe(on: MainScheduler.instance)
       .subscribe(onNext: { [weak self] error in
         let alert = UIAlertController(title: error.description, message: nil, preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        let okAction = UIAlertAction(title: L10n.commonOK, style: .default, handler: nil)
         alert.addAction(okAction)
         self?.present(alert, animated: true, completion: nil)
       })
@@ -193,8 +193,8 @@ class MainViewController: UIViewController, View {
         switch state {
           case .starting, .running:
             self?.recordButton.state = .start
-            self?.voiceReconitionView.setPlaceholder(text: "듣고 있습니다...")
-            self?.translationListenerView.setPlaceholder(text: "번역 준비 완료")
+            self?.voiceReconitionView.setPlaceholder(text: L10n.mainListening)
+            self?.translationListenerView.setPlaceholder(text: L10n.mainReadyForTranslation)
           case .canceling, .finishing, .completed:
             self?.recordButton.state = .end
           @unknown default:
@@ -225,7 +225,7 @@ class MainViewController: UIViewController, View {
       .asDriver(onErrorJustReturn: .current)
       .drive(onNext: { [weak self] locale in
         guard let locale = (locale as NSLocale).object(forKey: .languageCode) as? String else { return }
-        print("sr ~> \(locale)")
+        // TODO: 분기치지 말고 따로 유틸 클래스 만들어서 관리할 것
         if locale == "en" {
           self?.sourceCountryImageView.image = Images.america.image
         } else if locale == "ko" {
@@ -238,7 +238,7 @@ class MainViewController: UIViewController, View {
       .asDriver(onErrorJustReturn: .current)
       .drive(onNext: { [weak self] locale in
         guard let locale = (locale as NSLocale).object(forKey: .languageCode) as? String else { return }
-        print("tr ~> \(locale)")
+        // TODO: 분기치지 말고 따로 유틸 클래스 만들어서 관리할 것
         if locale == "en" {
           self?.targetCountryImageView.image = Images.america.image
         } else if locale == "ko" {

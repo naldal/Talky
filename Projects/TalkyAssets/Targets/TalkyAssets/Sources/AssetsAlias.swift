@@ -11,4 +11,5 @@ import Lottie
 public typealias Colors = TalkyAssetsAsset.Colors
 public typealias Images = TalkyAssetsAsset.Images
 public typealias Animations = AnimationAsset
+public typealias L10n = TalkyAssetsStrings
 
