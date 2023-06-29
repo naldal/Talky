@@ -80,8 +80,8 @@ final class MainReactor: Reactor {
           self.setVoiceRecognitionLocale(locale: currentTranslateLocale)
         ]).flatMap { _ -> Observable<Mutate> in
           return .from([
-            .setTranslationTargetLanguage(currentTranslateLocale),
-            .setVoiceRecognitionLanguage(currentRecognitionLocale)
+            .setTranslationTargetLanguage(currentRecognitionLocale),
+            .setVoiceRecognitionLanguage(currentTranslateLocale)
           ])
         }
         
@@ -185,9 +185,5 @@ final class MainReactor: Reactor {
   private func translate(voiceText: String) -> Observable<Result<TranslationResult, TalkyError>> {
     return usecase.translate(text: voiceText)
   }
-  
-  
-  // exchange locales
-  
   
 }

@@ -31,7 +31,7 @@ class MainViewController: UIViewController, View {
     $0.layer.borderColor = Colors.primary.color.cgColor
     $0.layer.masksToBounds = true
     $0.layer.cornerRadius = 18
-    $0.image = Images.korea.image
+//    $0.image = Images.korea.image
     $0.backgroundColor = .clear
   }
   
@@ -47,7 +47,7 @@ class MainViewController: UIViewController, View {
     $0.layer.borderColor = Colors.secondary.color.cgColor
     $0.layer.masksToBounds = true
     $0.layer.cornerRadius = 18
-    $0.image = Images.america.image
+//    $0.image = Images.america.image
     $0.backgroundColor = .clear
   }
   
@@ -223,19 +223,29 @@ class MainViewController: UIViewController, View {
     
     reactor.pulse { $0.voiceRecognitionLanguage }
       .asDriver(onErrorJustReturn: .current)
-      .drive(onNext: { lang in
-        print("lang ~> \(lang)")
-      
+      .drive(onNext: { [weak self] locale in
+        guard let locale = (locale as NSLocale).object(forKey: .languageCode) as? String else { return }
+        print("sr ~> \(locale)")
+        if locale == "en" {
+          self?.sourceCountryImageView.image = Images.america.image
+        } else if locale == "ko" {
+          self?.sourceCountryImageView.image = Images.korea.image
+        }
       })
       .disposed(by: self.disposeBag)
     
     reactor.pulse { $0.translationTargetLanguage }
       .asDriver(onErrorJustReturn: .current)
-      .drive(onNext: { lang in
-        print("lang ~> \(lang)")
+      .drive(onNext: { [weak self] locale in
+        guard let locale = (locale as NSLocale).object(forKey: .languageCode) as? String else { return }
+        print("tr ~> \(locale)")
+        if locale == "en" {
+          self?.targetCountryImageView.image = Images.america.image
+        } else if locale == "ko" {
+          self?.targetCountryImageView.image = Images.korea.image
+        }
       })
       .disposed(by: self.disposeBag)
-    
     
     // action
     

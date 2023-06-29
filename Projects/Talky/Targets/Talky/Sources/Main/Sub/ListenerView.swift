@@ -128,7 +128,7 @@ final class ListerView: UIView {
   
   func setPlaceholder(text placeholder: String) {
     self.listeningTextView.textColor = .gray
-    self.listeningTextView.font = .font(fonts: .bold, fontSize: 22)
+    self.listeningTextView.font = .font(fonts: .bold, fontSize: 24)
     self.listeningTextView.text = placeholder
   }
   
