@@ -26,6 +26,29 @@ class MainViewController: UIViewController, View {
     $0.backgroundColor = .clear
   }
   
+  private let sourceCountryImageView = UIImageView().then {
+    $0.backgroundColor = .gray
+  }
+  
+  private let translateIconImageView = UIImageView().then {
+    $0.image = Images.tranlsate.image
+  }
+  
+  private let targetCountryImageView = UIImageView().then {
+    $0.backgroundColor = .gray
+  }
+  
+  private lazy var translateCountriesStackView = UIStackView().then {
+    $0.alignment = .center
+    $0.distribution = .equalSpacing
+    $0.axis = .horizontal
+    
+    $0.addArrangedSubview(sourceCountryImageView)
+    $0.addArrangedSubview(translateIconImageView)
+    $0.addArrangedSubview(targetCountryImageView)
+  }
+  
+  
   private let separatorView = UIView().then {
     $0.backgroundColor = .clear
   }
@@ -38,6 +61,7 @@ class MainViewController: UIViewController, View {
     $0.setPlaceholder(text: "번역 준비 중")
     $0.setLanguage(lang: "English")
   }
+  
   private let recordButton = RecordButtonView()
   
   
@@ -109,6 +133,22 @@ class MainViewController: UIViewController, View {
     }
     
     self.backgroundView.bringSubviewToFront(self.recordButton)
+    
+    self.sourceCountryImageView.snp.makeConstraints { make in
+      make.width.height.equalTo(32)
+    }
+    self.targetCountryImageView.snp.makeConstraints { make in
+      make.width.height.equalTo(32)
+    }
+    self.translateIconImageView.snp.makeConstraints { make in
+      make.width.height.equalTo(20)
+    }
+    self.translateCountriesStackView.makeConstraints(baseView: self.backgroundView) { make in
+      make.height.equalTo(40)
+      make.width.equalTo(100)
+      make.trailing.equalTo(self.baseView)
+      make.bottom.equalTo(self.baseView.snp.top).offset(-12)
+    }
   }
   
   // MARK: - bind
@@ -171,9 +211,6 @@ class MainViewController: UIViewController, View {
       })
       .disposed(by: self.disposeBag)
       
-    
-    
-    
   }
   
   // MARK: - internal method
