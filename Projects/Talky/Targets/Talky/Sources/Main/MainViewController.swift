@@ -19,7 +19,7 @@ class MainViewController: UIViewController, View {
   // MARK: - components
   
   private let backgroundView = UIView().then {
-    $0.backgroundColor = Colors.primary.color
+    $0.backgroundColor = Colors.white.color
   }
   
   private let baseView = UIView().then {
@@ -27,7 +27,7 @@ class MainViewController: UIViewController, View {
   }
   
   private let separatorView = UIView().then {
-    $0.backgroundColor = Colors.primary.color
+    $0.backgroundColor = .clear
   }
   
   private let voiceListenerView = ListerView().then {
@@ -82,28 +82,28 @@ class MainViewController: UIViewController, View {
       make.centerX.equalToSuperview()
       make.height.equalTo(60)
       make.width.equalTo(100)
-      make.bottom.equalTo(safeGuide)
+      make.bottom.equalTo(safeGuide).inset(20)
     }
     
     self.baseView.makeConstraints(baseView: self.backgroundView) { make in
       let safeGuide = self.view.safeAreaLayoutGuide
-      make.top.equalTo(safeGuide).offset(24)
+      make.top.equalTo(safeGuide).offset(100)
       make.bottom.equalTo(self.recordButton.snp.top).offset(-12)
       make.leading.trailing.equalToSuperview().inset(16)
     }
     
     self.separatorView.makeConstraints(baseView: self.baseView) { make in
       make.centerY.leading.trailing.equalToSuperview()
-      make.height.equalTo(1)
+      make.height.equalTo(30)
     }
     
     self.voiceListenerView.makeConstraints(baseView: self.baseView) { make in
       make.top.leading.trailing.equalToSuperview()
-      make.bottom.equalTo(self.separatorView.snp.top).offset(-16)
+      make.bottom.equalTo(self.separatorView.snp.top)
     }
     
     self.translationListenerView.makeConstraints(baseView: self.baseView) { make in
-      make.top.equalTo(self.separatorView.snp.bottom).offset(16)
+      make.top.equalTo(self.separatorView.snp.bottom)
       make.leading.trailing.equalToSuperview()
       make.bottom.equalToSuperview().inset(8)
     }

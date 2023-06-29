@@ -20,12 +20,12 @@ final class ListerView: UIView {
     $0.layer.masksToBounds = true
     $0.layer.cornerRadius = 20
     $0.layer.borderColor = Colors.secondary.color.cgColor
-    $0.layer.borderWidth = 8.0
+    $0.layer.borderWidth = 1.0
     $0.backgroundColor = .clear
   }
   
   private lazy var listeningTextView = UITextView().then {
-    $0.textContainerInset = .init(top: 24, left: 24, bottom: 48, right: 24)
+    $0.textContainerInset = .init(top: 32, left: 24, bottom: 48, right: 24)
     $0.textContainer.lineBreakMode = .byCharWrapping
     $0.textContainer.maximumNumberOfLines = 0
     $0.isScrollEnabled = true
@@ -35,7 +35,7 @@ final class ListerView: UIView {
   }
   
   private let languageLabel = UILabel().then {
-    $0.font = UIFont.font(fonts: .regular, fontSize: 20)
+    $0.font = UIFont.font(fonts: .regular, fontSize: 16)
     $0.textColor = .black
   }
   
@@ -74,7 +74,7 @@ final class ListerView: UIView {
     }
     
     self.languageLabel.makeConstraints(baseView: self.baseView) { make in
-      make.bottom.trailing.equalToSuperview().inset(15)
+      make.bottom.trailing.equalToSuperview().inset(12)
     }
   }
   
