@@ -27,7 +27,12 @@ class MainViewController: UIViewController, View {
   }
   
   private let sourceCountryImageView = UIImageView().then {
-    $0.backgroundColor = .gray
+    $0.layer.borderWidth = 1.0
+    $0.layer.borderColor = Colors.primary.color.cgColor
+    $0.layer.masksToBounds = true
+    $0.layer.cornerRadius = 18
+    $0.image = Images.korea.image
+    $0.backgroundColor = .clear
   }
   
   private let translateIconImageView = UIImageView().then {
@@ -35,10 +40,16 @@ class MainViewController: UIViewController, View {
   }
   
   private let targetCountryImageView = UIImageView().then {
-    $0.backgroundColor = .gray
+    $0.layer.borderWidth = 1.0
+    $0.layer.borderColor = Colors.secondary.color.cgColor
+    $0.layer.masksToBounds = true
+    $0.layer.cornerRadius = 18
+    $0.image = Images.america.image
+    $0.backgroundColor = .clear
   }
   
   private lazy var translateCountriesStackView = UIStackView().then {
+    $0.spacing = 10
     $0.alignment = .center
     $0.distribution = .equalSpacing
     $0.axis = .horizontal
@@ -135,17 +146,17 @@ class MainViewController: UIViewController, View {
     self.backgroundView.bringSubviewToFront(self.recordButton)
     
     self.sourceCountryImageView.snp.makeConstraints { make in
-      make.width.height.equalTo(32)
+      make.width.height.equalTo(36)
     }
     self.targetCountryImageView.snp.makeConstraints { make in
-      make.width.height.equalTo(32)
+      make.width.height.equalTo(36)
     }
     self.translateIconImageView.snp.makeConstraints { make in
-      make.width.height.equalTo(20)
+      make.width.height.equalTo(22)
     }
     self.translateCountriesStackView.makeConstraints(baseView: self.backgroundView) { make in
-      make.height.equalTo(40)
-      make.width.equalTo(100)
+      make.height.equalTo(36)
+      make.width.equalTo(120)
       make.trailing.equalTo(self.baseView)
       make.bottom.equalTo(self.baseView.snp.top).offset(-12)
     }
@@ -174,7 +185,7 @@ class MainViewController: UIViewController, View {
         switch state {
           case .starting, .running:
             self?.recordButton.state = .start
-            self?.voiceListenerView.setPlaceholder(text: "듣고있습니다...")
+            self?.voiceListenerView.setPlaceholder(text: "듣고 있습니다...")
             self?.translationListenerView.setPlaceholder(text: "번역 준비 완료")
           case .canceling, .finishing, .completed:
             self?.recordButton.state = .end
@@ -188,6 +199,7 @@ class MainViewController: UIViewController, View {
       .compactMap({ $0 })
       .observe(on: MainScheduler.instance)
       .subscribe(onNext: { [weak self] text in
+        guard !text.isEmpty else { return }
         self?.voiceListenerView.setText(text: text)
         self?.reactor?.action.onNext(.voiceInput(text))
       })
@@ -197,9 +209,26 @@ class MainViewController: UIViewController, View {
       .skip(1)
       .observe(on: MainScheduler.instance)
       .subscribe(onNext: { [weak self] translatedText in
+        print("rrrrxxx ~> \(translatedText)")
         self?.translationListenerView.setText(text: translatedText)
       })
       .disposed(by: self.disposeBag)
+    
+    reactor.pulse { $0.voiceRecognitionLanguage }
+      .asDriver(onErrorJustReturn: "")
+      .drive(onNext: { lang in
+        print("lang ~> \(lang)")
+      
+      })
+      .disposed(by: self.disposeBag)
+    
+    reactor.pulse { $0.translationTargetLanguage }
+      .asDriver(onErrorJustReturn: "")
+      .drive(onNext: { lang in
+        print("lang ~> \(lang)")
+      })
+      .disposed(by: self.disposeBag)
+    
     
     // action
     

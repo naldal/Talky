@@ -7,13 +7,13 @@
 
 import UIKit
 
-extension UIImage {
+extension UIImageView {
   
-  public func downLoadIamge(url: URL, imageView: UIImageView, effects: [ImageEffect]) {
+  public func downLoadIamge(url: URL, effects: [ImageEffect]) {
     let imageLoader: ImageLoadAdapter = ImageLoadAdaptee()
     imageLoader.loadImageDefault(
       with: url,
-      onto: imageView,
+      onto: self,
       placeholder: nil,
       priority: .lowPriority,
       effects: effects

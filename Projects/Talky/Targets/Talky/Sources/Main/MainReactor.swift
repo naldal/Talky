@@ -14,8 +14,8 @@ final class MainReactor: Reactor {
   
   enum Action {
     case tappedRecord
-    case selectForeignLanguage(String)
-    case selectMotherLandLanguage(String)
+    case selectvoiceRecognitionLanguage(String)
+    case selecttranslationTargetLanguage(String)
     case voiceInput(String)
   }
   
@@ -24,8 +24,8 @@ final class MainReactor: Reactor {
     case setError(TalkyError?)
     case setRecognitionState(SFSpeechRecognitionTaskState?)
     case setVoiceConvertedText(String?)
-    case setForeignLanguage(String)
-    case setMotherLandLanguage(String)
+    case setvoiceRecognitionLanguage(String)
+    case settranslationTargetLanguage(String)
     case setTranslatedText(String)
   }
   
@@ -33,8 +33,8 @@ final class MainReactor: Reactor {
     var error: TalkyError? = nil
     var recognitionState: Pulse<SFSpeechRecognitionTaskState?> = .init(wrappedValue: nil)
     var voiceConvertedText: Pulse<String?> = .init(wrappedValue: nil)
-    var foreignLanguage: Pulse<String> = .init(wrappedValue: "")
-    var motherlandLanguage: Pulse<String> = .init(wrappedValue: "")
+    var voiceRecognitionLanguage: Pulse<String> = .init(wrappedValue: Locale.current.identifier)
+    var translationTargetLanguage: Pulse<String> = .init(wrappedValue: "en-US")
     var translatedText: Pulse<String> = .init(wrappedValue: "")
   }
   
@@ -71,11 +71,11 @@ final class MainReactor: Reactor {
         }
         return Observable.merge(stateMutation, textMutation)
         
-      case .selectForeignLanguage(let foreignLang):
-        return .just(.setForeignLanguage(foreignLang))
+      case .selectvoiceRecognitionLanguage(let foreignLang):
+        return .just(.setvoiceRecognitionLanguage(foreignLang))
         
-      case .selectMotherLandLanguage(let motherlandLang):
-        return .just(.setMotherLandLanguage(motherlandLang))
+      case .selecttranslationTargetLanguage(let motherlandLang):
+        return .just(.settranslationTargetLanguage(motherlandLang))
         
       case .voiceInput(let voice):
         // TODO: remove "en" but make set the target language later
@@ -105,10 +105,10 @@ final class MainReactor: Reactor {
         newState.error = talkyError
       case .setRecognitionState(let state):
         newState.recognitionState.value = state
-      case .setForeignLanguage(let foreignLanguage):
-        newState.foreignLanguage.value = foreignLanguage
-      case .setMotherLandLanguage(let motherlandLanguage):
-        newState.motherlandLanguage.value = motherlandLanguage
+      case .setvoiceRecognitionLanguage(let voiceRecognitionLanguage):
+        newState.voiceRecognitionLanguage.value = voiceRecognitionLanguage
+      case .settranslationTargetLanguage(let translationTargetLanguage):
+        newState.translationTargetLanguage.value = translationTargetLanguage
       case .setTranslatedText(let translatedText):
         newState.translatedText.value = translatedText
       case .setVoiceConvertedText(let convertedText):
