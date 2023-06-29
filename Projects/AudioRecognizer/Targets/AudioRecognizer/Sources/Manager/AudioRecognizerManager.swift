@@ -48,7 +48,6 @@ class AudioRecognizerManager {
   // MARK: - internal method
   
   func startRecording() {
-
     self.startAudioSession()
     self.setIsReportParticialResult(isParticial: true)
     self.startRecognitionTask()
