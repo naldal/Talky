@@ -71,7 +71,9 @@ final class MainReactor: Reactor {
         }
         
       case .exchangeLocales:
-        
+        guard self.currentState.recognitionState.value != .running else {
+          return .empty()
+        }
         let currentTranslateLocale = self.currentState.translationTargetLanguage.value
         let currentRecognitionLocale = self.currentState.voiceRecognitionLanguage.value
         
