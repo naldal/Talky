@@ -15,13 +15,19 @@ final class TranslationRepositoryImplement: TranslationRepository {
   
   // MARK: - private properties
   
+  private var translateLocale: Locale?
   private let translateAPI = NetworkProvider<TranslateAPI>()
   
   
   // MARK: - internal properties
   
-  func tranlsate(sourceText: String, to: String) -> Observable<Result<TranslationResult, TalkyError>> {
-    return self.translateAPI.request(target: .translate(apiKey: TalkyInfo.googleClientAPI, sourceText: sourceText, targetLanguage: to))
+  func setTranslationLocale(locale: Locale) -> Observable<Void> {
+    self.translateLocale = locale
+    return .empty()
+  }
+  
+  func tranlsate(sourceText: String) -> Observable<Result<TranslationResult, TalkyError>> {
+    return self.translateAPI.request(target: .translate(apiKey: TalkyInfo.googleClientAPI, sourceText: sourceText, targetLanguage: self.translateLocale))
       .map { result in
         switch result {
           case .success(let data):

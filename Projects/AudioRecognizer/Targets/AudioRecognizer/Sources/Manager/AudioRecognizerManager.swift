@@ -21,7 +21,7 @@ class AudioRecognizerManager {
   
   // MARK: - internal properties
   
-  var currentRecognizationLanguage: Locale = Locale.current {
+  public var currentRecognizationLanguage: Locale = Locale.current {
     didSet {
       self.refreshSFSpeechRecognizer()
     }

@@ -35,8 +35,11 @@ class MainViewController: UIViewController, View {
     $0.backgroundColor = .clear
   }
   
-  private let translateIconImageView = UIImageView().then {
+  private lazy var translateIconImageView = UIImageView().then {
     $0.image = Images.tranlsate.image
+    $0.isUserInteractionEnabled = true
+    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(test))
+    $0.addGestureRecognizer(tapGesture)
   }
   
   private let targetCountryImageView = UIImageView().then {
@@ -57,8 +60,13 @@ class MainViewController: UIViewController, View {
     $0.addArrangedSubview(sourceCountryImageView)
     $0.addArrangedSubview(translateIconImageView)
     $0.addArrangedSubview(targetCountryImageView)
+    
   }
   
+  @objc private func test() {
+    print("왈왈")
+    self.reactor?.action.onNext(.exchangeLocales)
+  }
   
   private let separatorView = UIView().then {
     $0.backgroundColor = .clear
@@ -101,7 +109,7 @@ class MainViewController: UIViewController, View {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    
+    self.reactor?.action.onNext(.initialSetting)
   }
   
   // MARK: - layout
@@ -209,13 +217,12 @@ class MainViewController: UIViewController, View {
       .skip(1)
       .observe(on: MainScheduler.instance)
       .subscribe(onNext: { [weak self] translatedText in
-        print("rrrrxxx ~> \(translatedText)")
         self?.translationListenerView.setText(text: translatedText)
       })
       .disposed(by: self.disposeBag)
     
     reactor.pulse { $0.voiceRecognitionLanguage }
-      .asDriver(onErrorJustReturn: "")
+      .asDriver(onErrorJustReturn: .current)
       .drive(onNext: { lang in
         print("lang ~> \(lang)")
       
@@ -223,7 +230,7 @@ class MainViewController: UIViewController, View {
       .disposed(by: self.disposeBag)
     
     reactor.pulse { $0.translationTargetLanguage }
-      .asDriver(onErrorJustReturn: "")
+      .asDriver(onErrorJustReturn: .current)
       .drive(onNext: { lang in
         print("lang ~> \(lang)")
       })

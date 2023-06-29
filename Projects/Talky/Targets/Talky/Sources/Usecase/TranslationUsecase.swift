@@ -44,9 +44,16 @@ final class TranslationUsecase {
     return self.audioListenser.convertedTextObservable
   }
   
+  func setVoiceRecognitionLocale(locale: Locale) -> Observable<Void> {
+    return self.audioListenser.setRecognitionLocale(locale: locale)
+  }
   
-  func translate(text: String, targetLanguage: String) -> Observable<Result<TranslationResult, TalkyError>> {
-    return self.repository.tranlsate(sourceText: text, to: targetLanguage)
+  func setTranslationLocale(locale: Locale) -> Observable<Void>{
+    return self.repository.setTranslationLocale(locale: locale)
+  }
+  
+  func translate(text: String) -> Observable<Result<TranslationResult, TalkyError>> {
+    return self.repository.tranlsate(sourceText: text)
   }
   
 }

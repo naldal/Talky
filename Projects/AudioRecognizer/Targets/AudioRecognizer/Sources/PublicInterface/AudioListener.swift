@@ -40,7 +40,13 @@ public final class AudioListener {
   
   let disposeBag = DisposeBag()
   
+  
   // MARK: - public method
+  
+  public func setRecognitionLocale(locale: Locale) -> Observable<Void> {
+    self.recognizationManger.currentRecognizationLanguage = locale
+    return .just(())
+  }
   
   public func startListen() {
     return self.recognizationManger.startRecording()
@@ -49,8 +55,7 @@ public final class AudioListener {
   public func stopListen() {
     return self.recognizationManger.stopRecording()
   }
-  
-  
+   
   public func listenState() {
     self.recognizationManger.recognizeTaskStatus
       .bind(to: self.stateObservable)

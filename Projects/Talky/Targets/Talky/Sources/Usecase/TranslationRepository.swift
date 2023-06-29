@@ -10,8 +10,8 @@ import Foundation
 import RxSwift
 
 protocol TranslationRepository {
-  // TODO: replece String to Language Type (maybe enum or whatever)
-  func tranlsate(sourceText: String, to: String) -> Observable<Result<TranslationResult, TalkyError>>
+  func setTranslationLocale(locale: Locale) -> Observable<Void>
+  func tranlsate(sourceText: String) -> Observable<Result<TranslationResult, TalkyError>>
 }
 
 struct TranslationResult: Decodable {
