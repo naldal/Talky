@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Add the Privacy - Microphone Usage</key>
-	<string>앱에서 마이크를 사용하여 음성인식을 처리합니다.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -24,12 +22,6 @@
 	<string>AIzaSyC21USNRGAlF9dkzQa3vSVUvbyps0crjEE</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>앱에서 마이크를 사용하여 음성인식을 처리합니다.</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>음성인식 허가</string>
-	<key>Select the Privacy - Speech Recognition</key>
-	<string>앱에서 음성인식을 사용하기 위해 마이크에 접근해야 합니다.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -66,5 +58,9 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>$(Privacy_Speech_Recognition)</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>$(Privacy_Microphone_Usage)</string>
 </dict>
 </plist>

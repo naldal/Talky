@@ -16,5 +16,7 @@ public extension TargetDependency {
   static let swiftyjson: TargetDependency = .external(name: "SwiftyJSON")
   static let audioRecognizer: TargetDependency = .project(target: "AudioRecognizer", path: "../AudioRecognizer")
   static let lottie: TargetDependency = .external(name: "Lottie")
-  
+  static let nuke: TargetDependency = .external(name: "Nuke")
+  static let nukeExtensions: TargetDependency = .external(name: "NukeExtensions")
+  static let nukeUI: TargetDependency = .external(name: "NukeUI")
 }

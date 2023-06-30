@@ -13,9 +13,11 @@ import Speech
 final class MainReactor: Reactor {
   
   enum Action {
+    case initialSetting
+    case exchangeLocales
     case tappedRecord
-    case selectForeignLanguage(String)
-    case selectMotherLandLanguage(String)
+    case selectvoiceRecognitionLanguage(Locale)
+    case selecttranslationTargetLanguage(Locale)
     case voiceInput(String)
   }
   
@@ -24,17 +26,17 @@ final class MainReactor: Reactor {
     case setError(TalkyError?)
     case setRecognitionState(SFSpeechRecognitionTaskState?)
     case setVoiceConvertedText(String?)
-    case setForeignLanguage(String)
-    case setMotherLandLanguage(String)
+    case setVoiceRecognitionLanguage(Locale)
+    case setTranslationTargetLanguage(Locale)
     case setTranslatedText(String)
   }
   
   struct State {
-    var error: TalkyError? = nil
+    var error: TalkyError?
     var recognitionState: Pulse<SFSpeechRecognitionTaskState?> = .init(wrappedValue: nil)
     var voiceConvertedText: Pulse<String?> = .init(wrappedValue: nil)
-    var foreignLanguage: Pulse<String> = .init(wrappedValue: "")
-    var motherlandLanguage: Pulse<String> = .init(wrappedValue: "")
+    var voiceRecognitionLanguage: Pulse<Locale> = .init(wrappedValue: Locale.current)
+    var translationTargetLanguage: Pulse<Locale> = .init(wrappedValue: Locale.init(identifier: "en-US"))
     var translatedText: Pulse<String> = .init(wrappedValue: "")
   }
   
@@ -54,7 +56,37 @@ final class MainReactor: Reactor {
   }
   
   func mutate(action: Action) -> Observable<Mutate> {
+    
     switch action {
+        
+      case .initialSetting:
+        let initialTranslateLocale = self.currentState.translationTargetLanguage.value
+        let initialRecognitionLocale = self.currentState.voiceRecognitionLanguage.value
+        
+        return Observable.from([
+          self.setTranslationLocale(locale: initialTranslateLocale),
+          self.setVoiceRecognitionLocale(locale: initialRecognitionLocale)
+        ]).map { _ in
+          return .empty
+        }
+        
+      case .exchangeLocales:
+        guard self.currentState.recognitionState.value != .running else {
+          return .empty()
+        }
+        let currentTranslateLocale = self.currentState.translationTargetLanguage.value
+        let currentRecognitionLocale = self.currentState.voiceRecognitionLanguage.value
+        
+        return Observable.from([
+          self.setTranslationLocale(locale: currentRecognitionLocale),
+          self.setVoiceRecognitionLocale(locale: currentTranslateLocale)
+        ]).flatMap { _ -> Observable<Mutate> in
+          return .from([
+            .setTranslationTargetLanguage(currentRecognitionLocale),
+            .setVoiceRecognitionLanguage(currentTranslateLocale)
+          ])
+        }
+        
       case .tappedRecord:
         let currentState = self.currentState.recognitionState.value
         if currentState == .running {
@@ -71,15 +103,14 @@ final class MainReactor: Reactor {
         }
         return Observable.merge(stateMutation, textMutation)
         
-      case .selectForeignLanguage(let foreignLang):
-        return .just(.setForeignLanguage(foreignLang))
+      case .selectvoiceRecognitionLanguage(let foreignLang):
+        return .just(.setVoiceRecognitionLanguage(foreignLang))
         
-      case .selectMotherLandLanguage(let motherlandLang):
-        return .just(.setMotherLandLanguage(motherlandLang))
+      case .selecttranslationTargetLanguage(let motherlandLang):
+        return .just(.setTranslationTargetLanguage(motherlandLang))
         
       case .voiceInput(let voice):
-        // TODO: remove "en" but make set the target language later
-        return self.translate(voiceText: voice, targetLanguage: "en")
+        return self.translate(voiceText: voice)
           .map({ [weak self] result in
             switch result {
               case .success(let translateResult):
@@ -105,10 +136,10 @@ final class MainReactor: Reactor {
         newState.error = talkyError
       case .setRecognitionState(let state):
         newState.recognitionState.value = state
-      case .setForeignLanguage(let foreignLanguage):
-        newState.foreignLanguage.value = foreignLanguage
-      case .setMotherLandLanguage(let motherlandLanguage):
-        newState.motherlandLanguage.value = motherlandLanguage
+      case .setVoiceRecognitionLanguage(let voiceRecognitionLanguage):
+        newState.voiceRecognitionLanguage.value = voiceRecognitionLanguage
+      case .setTranslationTargetLanguage(let translationTargetLanguage):
+        newState.translationTargetLanguage.value = translationTargetLanguage
       case .setTranslatedText(let translatedText):
         newState.translatedText.value = translatedText
       case .setVoiceConvertedText(let convertedText):
@@ -119,6 +150,9 @@ final class MainReactor: Reactor {
   
   // MARK: - private func
   
+  
+  // handle recognizer
+  
   private func startAudioRecognizer() {
     return usecase.startAudioRecognizer()
   }
@@ -126,6 +160,8 @@ final class MainReactor: Reactor {
   private func stopAudioRecognizer() {
     return usecase.stopAudioRecognizer()
   }
+  
+  // recognizer states
   
   private func listenRecognizerState() -> Observable<SFSpeechRecognitionTaskState?> {
     return usecase.listenRecognizerState()
@@ -135,8 +171,21 @@ final class MainReactor: Reactor {
     return usecase.listenConvertedText()
   }
   
-  private func translate(voiceText: String, targetLanguage: String) -> Observable<Result<TranslationResult, TalkyError>> {
-    return usecase.translate(text: voiceText, targetLanguage: targetLanguage)
+  // locales
+  
+  private func setVoiceRecognitionLocale(locale: Locale) -> Observable<Void> {
+    return usecase.setVoiceRecognitionLocale(locale: locale)
+  }
+  
+  private func setTranslationLocale(locale: Locale) -> Observable<Void> {
+    return usecase.setTranslationLocale(locale: locale)
+  }
+  
+  
+  // translate
+  
+  private func translate(voiceText: String) -> Observable<Result<TranslationResult, TalkyError>> {
+    return usecase.translate(text: voiceText)
   }
   
 }

@@ -10,7 +10,7 @@ import Foundation
 import Moya
 
 enum TranslateAPI {
-  case translate(apiKey: String, sourceText: String, targetLanguage: String)
+  case translate(apiKey: String, sourceText: String, targetLanguage: Locale?)
 }
 
 extension TranslateAPI: TargetType {
@@ -39,7 +39,11 @@ extension TranslateAPI: TargetType {
         let bodyParams: [String: Any] = {
           var returnBodyParams: [String: Any] = [:]
           returnBodyParams["q"] = sourceText
-          returnBodyParams["target"] = targetLanguage
+          if let translationLanguage = (targetLanguage as? NSLocale)?.object(forKey: .languageCode) {
+            returnBodyParams["target"] = translationLanguage
+          } else {
+            returnBodyParams["target"] = "en"
+          }
           returnBodyParams["format"] = "text"
           return returnBodyParams
         }()

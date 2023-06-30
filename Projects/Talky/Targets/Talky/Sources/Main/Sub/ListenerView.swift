@@ -14,18 +14,24 @@ import RxCocoa
 
 final class ListerView: UIView {
   
+  enum Role {
+    case speaker
+    case translator
+  }
+  
+  
   // MARK: - components
   
   private let baseView = UIView().then {
     $0.layer.masksToBounds = true
     $0.layer.cornerRadius = 20
     $0.layer.borderColor = Colors.secondary.color.cgColor
-    $0.layer.borderWidth = 8.0
+    $0.layer.borderWidth = 1.0
     $0.backgroundColor = .clear
   }
   
   private lazy var listeningTextView = UITextView().then {
-    $0.textContainerInset = .init(top: 24, left: 24, bottom: 48, right: 24)
+    $0.textContainerInset = .init(top: 32, left: 24, bottom: 48, right: 24)
     $0.textContainer.lineBreakMode = .byCharWrapping
     $0.textContainer.maximumNumberOfLines = 0
     $0.isScrollEnabled = true
@@ -34,14 +40,17 @@ final class ListerView: UIView {
     $0.delegate = self
   }
   
-  private let languageLabel = UILabel().then {
-    $0.font = UIFont.font(fonts: .regular, fontSize: 20)
-    $0.textColor = .black
-  }
+  private let roleImageView = UIImageView()
   
   // MARK: - internal properties
- 
-  // MARK: - internal properties
+  
+  var role: Role? {
+    didSet {
+      guard let role = role else { return }
+      self.setRoleImage(role: role)
+    }
+  }
+  
   
   // MARK: - private properties
   
@@ -73,10 +82,12 @@ final class ListerView: UIView {
       make.edges.equalToSuperview()
     }
     
-    self.languageLabel.makeConstraints(baseView: self.baseView) { make in
-      make.bottom.trailing.equalToSuperview().inset(15)
+    self.roleImageView.makeConstraints(baseView: self.baseView) { make in
+      make.width.height.equalTo(26)
+      make.bottom.trailing.equalToSuperview().inset(12)
     }
   }
+  
   
   // MARK: - bind
   
@@ -104,7 +115,7 @@ final class ListerView: UIView {
       string: text ?? "",
       attributes: [
         NSAttributedString.Key.paragraphStyle: paragraphStyle,
-        NSAttributedString.Key.font: UIFont.font(fonts: .extrabold, fontSize: 32)
+        NSAttributedString.Key.font: UIFont.font(fonts: .extrabold, fontSize: 26)
       ]
     )
     self.listeningTextView.textColor = .black
@@ -117,13 +128,15 @@ final class ListerView: UIView {
   
   func setPlaceholder(text placeholder: String) {
     self.listeningTextView.textColor = .gray
-    self.listeningTextView.font = .font(fonts: .bold, fontSize: 30)
+    self.listeningTextView.font = .font(fonts: .bold, fontSize: 24)
     self.listeningTextView.text = placeholder
   }
   
-  func setLanguage(lang: String) {
-    self.languageLabel.text = lang
+  func setBorderColor(color: UIColor, width: CGFloat = 1.0) {
+    self.baseView.layer.borderColor = color.cgColor
+    self.baseView.layer.borderWidth = width
   }
+  
   
   // MARK: - private method
   
@@ -136,6 +149,16 @@ final class ListerView: UIView {
     let bottomOffset = CGPoint(x: 0, y: listeningTextView.contentSize.height - listeningTextView.bounds.size.height + listeningTextView.contentInset.bottom)
     self.listeningTextView.setContentOffset(bottomOffset, animated: true)
   }
+  
+  private func setRoleImage(role: Role) {
+    switch role {
+      case .speaker:
+        self.roleImageView.image = Images.roleSpeaker.image
+      case .translator:
+        self.roleImageView.image = Images.roleTranslate.image
+    }
+  }
+  
 }
 
 extension ListerView: UITextViewDelegate {

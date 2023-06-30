@@ -18,6 +18,8 @@ jobs:
       run: cd /Users/songhamin/Desktop/Talky
     - name: checkout
       run: git checkout develop
+    - name: pull
+      run: git pull
     - name: clean before go through
       run: tuist clean
     - name: tuist fetch
@@ -26,7 +28,7 @@ jobs:
       run: tuist generate -n
     - name: reset
       run: git reset --hard
-    - name: build
+    - name: xcbuild
       run: xcodebuild build -workspace workspace.xcworkspace -scheme TalkyDev -destination 'platform=iOS Simulator,name=iPhone 14 Plus,OS=latest'
-    - name: tests
+    - name: xctests
       run: xcodebuild test -workspace workspace.xcworkspace -scheme TalkyDev -destination 'platform=iOS Simulator,name=iPhone 14 Plus,OS=latest'

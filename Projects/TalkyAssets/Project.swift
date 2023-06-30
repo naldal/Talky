@@ -15,7 +15,10 @@ let project = Project(
     name: projectName,
     customInfoPlist: .default,
     dependencies: [
-      .lottie
+      .lottie,
+      .nuke,
+      .nukeExtensions,
+      .nukeUI
     ],
     testDependencies: []
   ),

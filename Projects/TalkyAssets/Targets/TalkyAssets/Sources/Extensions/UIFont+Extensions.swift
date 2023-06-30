@@ -9,8 +9,9 @@
 import UIKit
 
 public typealias NanumSquareRound = TalkyAssetsFontFamily.NanumSquareRoundOTF
+public typealias NanumSquareSquare = TalkyAssetsFontFamily.NanumSquareNeoOTF
 
-public enum NanumSquareRoundType {
+public enum NanumSquareType {
   case regular
   case bold
   case extrabold
@@ -18,14 +19,14 @@ public enum NanumSquareRoundType {
 
 extension UIFont {
   
-  public static func font(fonts: NanumSquareRoundType, fontSize: CGFloat) -> UIFont {
+  public static func font(fonts: NanumSquareType, fontSize: CGFloat) -> UIFont {
     switch fonts {
     case .regular:
-        return NanumSquareRound.regular.font(size: fontSize)
+        return NanumSquareSquare.regular.font(size: fontSize)
     case .bold:
-        return NanumSquareRound.bold.font(size: fontSize)
+        return NanumSquareSquare.bold.font(size: fontSize)
       case .extrabold:
-        return NanumSquareRound.extraBold.font(size: fontSize)
+        return NanumSquareSquare.extraBold.font(size: fontSize)
     }
   }
 }

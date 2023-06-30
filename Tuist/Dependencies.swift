@@ -14,6 +14,7 @@ let dependencies = Dependencies(
     .remote(url: "https://github.com/RxSwiftCommunity/RxFlow.git", requirement: .branch("main")),
     .remote(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", requirement: .branch("master")),
     .remote(url: "https://github.com/airbnb/lottie-spm.git", requirement: .exact("4.2.0")),
+    .remote(url: "https://github.com/kean/Nuke.git", requirement: .exact("12.1.2"))
   ], productTypes: [
     "Quick": .framework,
     "Nimble": .framework,
@@ -26,6 +27,8 @@ let dependencies = Dependencies(
     "ReactorKit": .staticFramework,
     "RxFlow": .staticFramework,
     "SwiftyJSON": .staticFramework,
-    "Lottie": .staticFramework
+    "Lottie": .staticFramework,
+    "Nuke": .staticFramework,
+    "NukeExtensions": .staticFramework
   ])
 )

@@ -79,8 +79,8 @@ public extension Project {
       settings: settings,
       targets: targets,
       resourceSynthesizers: [
-        .strings(),
-        .plists()
+        .plists(),
+        .strings()
       ]
     )
   }

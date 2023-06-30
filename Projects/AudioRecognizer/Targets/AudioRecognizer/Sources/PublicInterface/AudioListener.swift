@@ -13,11 +13,10 @@ import Speech
 public final class AudioListener {
   
   public enum AudioListenerType {
-    case willListening
     case listening
-    case willStopping
     case stopped
   }
+  
   
   // MARK: - public properties
 
@@ -31,6 +30,11 @@ public final class AudioListener {
   private(set) var audioListerState: AudioListenerType = .stopped
   
   
+  // MARK: - internal properites
+  
+  let disposeBag = DisposeBag()
+  
+  
   // MARK: - life cycle
   
   public init() {
@@ -38,9 +42,13 @@ public final class AudioListener {
     self.listenConvertedText()
   }
   
-  let disposeBag = DisposeBag()
   
   // MARK: - public method
+  
+  public func setRecognitionLocale(locale: Locale) -> Observable<Void> {
+    self.recognizationManger.currentRecognizationLanguage = locale
+    return .just(())
+  }
   
   public func startListen() {
     return self.recognizationManger.startRecording()
@@ -49,8 +57,7 @@ public final class AudioListener {
   public func stopListen() {
     return self.recognizationManger.stopRecording()
   }
-  
-  
+   
   public func listenState() {
     self.recognizationManger.recognizeTaskStatus
       .bind(to: self.stateObservable)
