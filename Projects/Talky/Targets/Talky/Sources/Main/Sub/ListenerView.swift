@@ -132,14 +132,11 @@ final class ListerView: UIView {
     self.listeningTextView.text = placeholder
   }
   
-  private func setRoleImage(role: Role) {
-    switch role {
-      case .speaker:
-        self.roleImageView.image = Images.roleSpeaker.image
-      case .translator:
-        self.roleImageView.image = Images.roleTranslate.image
-    }
+  func setBorderColor(color: UIColor, width: CGFloat = 1.0) {
+    self.baseView.layer.borderColor = color.cgColor
+    self.baseView.layer.borderWidth = width
   }
+  
   
   // MARK: - private method
   
@@ -152,6 +149,16 @@ final class ListerView: UIView {
     let bottomOffset = CGPoint(x: 0, y: listeningTextView.contentSize.height - listeningTextView.bounds.size.height + listeningTextView.contentInset.bottom)
     self.listeningTextView.setContentOffset(bottomOffset, animated: true)
   }
+  
+  private func setRoleImage(role: Role) {
+    switch role {
+      case .speaker:
+        self.roleImageView.image = Images.roleSpeaker.image
+      case .translator:
+        self.roleImageView.image = Images.roleTranslate.image
+    }
+  }
+  
 }
 
 extension ListerView: UITextViewDelegate {

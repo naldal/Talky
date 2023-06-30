@@ -28,15 +28,29 @@ final class RecordButtonView: UIView {
   // MARK: - components
   
   private lazy var baseView = UIView().then {
+    $0.layer.shadowOffset = CGSize(width: 0, height: 5)
+    $0.layer.shadowOpacity = 0.7
+    $0.layer.shadowRadius = 1
+    $0.layer.shadowColor = Colors.secondaryShadow.color.cgColor
+    $0.layer.masksToBounds = false
     $0.layer.cornerRadius = 30
     $0.isUserInteractionEnabled = true
-    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapBase))
-    $0.addGestureRecognizer(tapGesture)
+    let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
+    longPressGesture.minimumPressDuration = 0
+    $0.addGestureRecognizer(longPressGesture)
     $0.backgroundColor = Colors.secondary.color
   }
   
-  @objc private func tapBase() {
-    self.delegate?.tap?(self)
+  @objc private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+    switch gesture.state {
+      case .began:
+        self.transformPressOn()
+      case .ended, .cancelled:
+        self.delegate?.tap?(self)
+        self.transformPressOff()
+      default:
+        break
+    }
   }
 
   private let iconImageView = UIImageView().then {
@@ -45,8 +59,7 @@ final class RecordButtonView: UIView {
   }
   
   private let lottieView = LottieAnimationView(animation: Animations.recordAnimation.animation).then {
-  
-    $0.animationSpeed = 1.2
+    $0.animationSpeed = 3
     $0.loopMode = .loop
   }
   
@@ -57,7 +70,7 @@ final class RecordButtonView: UIView {
   var state: RecoardState = .end {
     didSet {
       guard state != oldValue else { return }
-      self.animateBackground(state: state)
+      self.animateButtonColors(state: state)
       self.handleUI(as: state)
     }
   }
@@ -87,10 +100,6 @@ final class RecordButtonView: UIView {
       make.width.height.equalTo(30)
     }
     
-    self.lottieView.makeConstraints(baseView: self.baseView) { make in
-      make.centerX.centerY.equalToSuperview()
-      make.width.height.equalTo(70)
-    }
   }
  
   // MARK: - internal method
@@ -122,32 +131,50 @@ final class RecordButtonView: UIView {
   }
   
   private func startRecordAnimation() {
-    self.lottieView.play { _ in
-      UIView.animate(withDuration: 0.2, animations: { [weak self] in
-        self?.lottieView.alpha = 1.0
-      })
+    self.lottieView.makeConstraints(baseView: baseView) { make in
+      make.centerX.centerY.equalToSuperview()
+      make.width.height.equalTo(70)
     }
+    self.lottieView.play()
   }
  
   private func stopRecordAnimation() {
     UIView.animate(withDuration: 0.2, animations: { [weak self] in
-      self?.lottieView.alpha = 0
+      self?.lottieView.removeFromSuperview()
     }, completion: { isStarted in
       self.lottieView.stop()
     })
   }
   
-  private func animateBackground(state: RecoardState) {
-    var settableColor: UIColor = .clear
+  private func animateButtonColors(state: RecoardState) {
+    var settableBackgroundColor: UIColor = .clear
+    var settableShadowColor: UIColor = .clear
     switch state {
       case .start:
-        settableColor = .black
+        settableBackgroundColor = .black
+        settableShadowColor = .black
       case .end:
-        settableColor = Colors.secondary.color
+        settableBackgroundColor = Colors.secondary.color
+        settableShadowColor = Colors.secondaryShadow.color
     }
     UIView.transition(with: self.baseView, duration: 0.2) {
-      self.baseView.backgroundColor = settableColor
+      self.baseView.backgroundColor = settableBackgroundColor
+      self.baseView.layer.shadowColor = settableShadowColor.cgColor
     }
+  }
+  
+  private func transformPressOn() {
+    var transform = baseView.transform
+    transform = transform.translatedBy(x: 0, y: 5)
+    self.baseView.layer.shadowOffset = .zero
+    self.baseView.transform = transform
+  }
+  
+  private func transformPressOff() {
+    var transform = baseView.transform
+    transform = transform.translatedBy(x: 0, y: -5)
+    self.baseView.layer.shadowOffset = CGSize(width: 0, height: 5)
+    self.baseView.transform = transform
   }
 }
 

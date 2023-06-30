@@ -27,30 +27,26 @@ class MainViewController: UIViewController, View {
   }
   
   private let sourceCountryImageView = UIImageView().then {
-    $0.layer.borderWidth = 1.0
-    $0.layer.borderColor = Colors.primary.color.cgColor
+    $0.layer.borderWidth = 2.0
+    $0.layer.borderColor = Colors.secondary.color.cgColor
     $0.layer.masksToBounds = true
     $0.layer.cornerRadius = 18
-//    $0.image = Images.korea.image
     $0.backgroundColor = .clear
   }
   
   private lazy var translateIconImageView = UIImageView().then {
     $0.image = Images.tranlsate.image
-    $0.isUserInteractionEnabled = true
-    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(test))
-    $0.addGestureRecognizer(tapGesture)
   }
   
   private let targetCountryImageView = UIImageView().then {
-    $0.layer.borderWidth = 1.0
-    $0.layer.borderColor = Colors.secondary.color.cgColor
+    $0.layer.borderWidth = 2.0
+    $0.layer.borderColor = Colors.primary.color.cgColor
     $0.layer.masksToBounds = true
     $0.layer.cornerRadius = 18
-//    $0.image = Images.america.image
     $0.backgroundColor = .clear
   }
   
+  // TODO: 모듈화 할 것
   private lazy var translateCountriesStackView = UIStackView().then {
     $0.spacing = 10
     $0.alignment = .center
@@ -60,12 +56,14 @@ class MainViewController: UIViewController, View {
     $0.addArrangedSubview(sourceCountryImageView)
     $0.addArrangedSubview(translateIconImageView)
     $0.addArrangedSubview(targetCountryImageView)
-    
   }
   
-  @objc private func test() {
-    print("왈왈")
-    self.reactor?.action.onNext(.exchangeLocales)
+  private lazy var stackBlurView = UIView().then {
+    $0.backgroundColor = Colors.white.color.withAlphaComponent(0)
+    $0.isUserInteractionEnabled = true
+    let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
+    longGesture.minimumPressDuration = 0
+    $0.addGestureRecognizer(longGesture)
   }
   
   private let separatorView = UIView().then {
@@ -75,16 +73,22 @@ class MainViewController: UIViewController, View {
   private let voiceReconitionView = ListerView().then {
     $0.role = .speaker
     $0.setPlaceholder(text: L10n.mainAskTurnOnMicrophone)
+    $0.setBorderColor(color: Colors.secondary.color, width: 2)
   }
+  
   private let translationListenerView = ListerView().then {
     $0.role = .translator
     $0.setPlaceholder(text: L10n.mainPrepareingForTranslation)
+    $0.setBorderColor(color: Colors.primary.color, width: 2)
   }
   
   private let recordButton = RecordButtonView()
   
   
   // MARK: - private properties
+  
+  private var exchangable: Bool = true
+  
     
   // MARK: - internal properties
   
@@ -137,7 +141,7 @@ class MainViewController: UIViewController, View {
     
     self.separatorView.makeConstraints(baseView: self.baseView) { make in
       make.centerY.leading.trailing.equalToSuperview()
-      make.height.equalTo(30)
+      make.height.equalTo(16)
     }
     
     self.voiceReconitionView.makeConstraints(baseView: self.baseView) { make in
@@ -168,6 +172,11 @@ class MainViewController: UIViewController, View {
       make.trailing.equalTo(self.baseView)
       make.bottom.equalTo(self.baseView.snp.top).offset(-12)
     }
+    
+    self.stackBlurView.makeConstraints(baseView: self.translateCountriesStackView) { make in
+      make.edges.equalToSuperview()
+      make.width.height.equalToSuperview()
+    }
   }
   
   // MARK: - bind
@@ -192,11 +201,9 @@ class MainViewController: UIViewController, View {
       .subscribe(onNext: { [weak self] state in
         switch state {
           case .starting, .running:
-            self?.recordButton.state = .start
-            self?.voiceReconitionView.setPlaceholder(text: L10n.mainListening)
-            self?.translationListenerView.setPlaceholder(text: L10n.mainReadyForTranslation)
+            self?.setRunningRecognitionUI()
           case .canceling, .finishing, .completed:
-            self?.recordButton.state = .end
+            self?.setStoppedRecognitionUI()
           @unknown default:
             break
         }
@@ -262,6 +269,36 @@ class MainViewController: UIViewController, View {
   // MARK: - internal method
   
   // MARK: - private method
-
+  
+  @objc private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+    guard self.exchangable else { return }
+    switch gesture.state {
+      case .began:
+        handleBlur(alpha: 0.6)
+      case .ended, .cancelled:
+        self.reactor?.action.onNext(.exchangeLocales)
+        handleBlur(alpha: 0)
+      default:
+        break
+    }
+  }
+  
+  private func handleBlur(alpha: CGFloat) {
+    self.stackBlurView.backgroundColor = Colors.white.color.withAlphaComponent(alpha)
+  }
+  
+  private func setRunningRecognitionUI() {
+    self.recordButton.state = .start
+    self.voiceReconitionView.setPlaceholder(text: L10n.mainListening)
+    self.translationListenerView.setPlaceholder(text: L10n.mainReadyForTranslation)
+    self.handleBlur(alpha: 0.6)
+    self.exchangable = false
+  }
+  
+  private func setStoppedRecognitionUI() {
+    self.recordButton.state = .end
+    self.handleBlur(alpha: 0)
+    self.exchangable = true
+  }
 }
 

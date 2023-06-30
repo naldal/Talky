@@ -13,11 +13,10 @@ import Speech
 public final class AudioListener {
   
   public enum AudioListenerType {
-    case willListening
     case listening
-    case willStopping
     case stopped
   }
+  
   
   // MARK: - public properties
 
@@ -31,14 +30,17 @@ public final class AudioListener {
   private(set) var audioListerState: AudioListenerType = .stopped
   
   
+  // MARK: - internal properites
+  
+  let disposeBag = DisposeBag()
+  
+  
   // MARK: - life cycle
   
   public init() {
     self.listenState()
     self.listenConvertedText()
   }
-  
-  let disposeBag = DisposeBag()
   
   
   // MARK: - public method
