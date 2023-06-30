@@ -32,7 +32,7 @@ final class MainReactor: Reactor {
   }
   
   struct State {
-    var error: TalkyError? = nil
+    var error: TalkyError?
     var recognitionState: Pulse<SFSpeechRecognitionTaskState?> = .init(wrappedValue: nil)
     var voiceConvertedText: Pulse<String?> = .init(wrappedValue: nil)
     var voiceRecognitionLanguage: Pulse<Locale> = .init(wrappedValue: Locale.current)

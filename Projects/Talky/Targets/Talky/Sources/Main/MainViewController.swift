@@ -36,9 +36,6 @@ class MainViewController: UIViewController, View {
   
   private lazy var translateIconImageView = UIImageView().then {
     $0.image = Images.tranlsate.image
-    $0.isUserInteractionEnabled = true
-    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(exchangeLanguages))
-    $0.addGestureRecognizer(tapGesture)
   }
   
   private let targetCountryImageView = UIImageView().then {
@@ -49,6 +46,7 @@ class MainViewController: UIViewController, View {
     $0.backgroundColor = .clear
   }
   
+  // TODO: 모듈화 할 것
   private lazy var translateCountriesStackView = UIStackView().then {
     $0.spacing = 10
     $0.alignment = .center
@@ -58,6 +56,14 @@ class MainViewController: UIViewController, View {
     $0.addArrangedSubview(sourceCountryImageView)
     $0.addArrangedSubview(translateIconImageView)
     $0.addArrangedSubview(targetCountryImageView)
+  }
+  
+  private lazy var stackBlurView = UIView().then {
+    $0.backgroundColor = Colors.white.color.withAlphaComponent(0)
+    $0.isUserInteractionEnabled = true
+    let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
+    longGesture.minimumPressDuration = 0
+    $0.addGestureRecognizer(longGesture)
   }
   
   private let separatorView = UIView().then {
@@ -80,6 +86,9 @@ class MainViewController: UIViewController, View {
   
   
   // MARK: - private properties
+  
+  private var exchangable: Bool = true
+  
     
   // MARK: - internal properties
   
@@ -163,6 +172,11 @@ class MainViewController: UIViewController, View {
       make.trailing.equalTo(self.baseView)
       make.bottom.equalTo(self.baseView.snp.top).offset(-12)
     }
+    
+    self.stackBlurView.makeConstraints(baseView: self.translateCountriesStackView) { make in
+      make.edges.equalToSuperview()
+      make.width.height.equalToSuperview()
+    }
   }
   
   // MARK: - bind
@@ -187,11 +201,9 @@ class MainViewController: UIViewController, View {
       .subscribe(onNext: { [weak self] state in
         switch state {
           case .starting, .running:
-            self?.recordButton.state = .start
-            self?.voiceReconitionView.setPlaceholder(text: L10n.mainListening)
-            self?.translationListenerView.setPlaceholder(text: L10n.mainReadyForTranslation)
+            self?.setRunningRecognitionUI()
           case .canceling, .finishing, .completed:
-            self?.recordButton.state = .end
+            self?.setStoppedRecognitionUI()
           @unknown default:
             break
         }
@@ -258,8 +270,35 @@ class MainViewController: UIViewController, View {
   
   // MARK: - private method
   
-  @objc private func exchangeLanguages() {
-    self.reactor?.action.onNext(.exchangeLocales)
+  @objc private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+    guard self.exchangable else { return }
+    switch gesture.state {
+      case .began:
+        handleBlur(alpha: 0.6)
+      case .ended, .cancelled:
+        self.reactor?.action.onNext(.exchangeLocales)
+        handleBlur(alpha: 0)
+      default:
+        break
+    }
+  }
+  
+  private func handleBlur(alpha: CGFloat) {
+    self.stackBlurView.backgroundColor = Colors.white.color.withAlphaComponent(alpha)
+  }
+  
+  private func setRunningRecognitionUI() {
+    self.recordButton.state = .start
+    self.voiceReconitionView.setPlaceholder(text: L10n.mainListening)
+    self.translationListenerView.setPlaceholder(text: L10n.mainReadyForTranslation)
+    self.handleBlur(alpha: 0.6)
+    self.exchangable = false
+  }
+  
+  private func setStoppedRecognitionUI() {
+    self.recordButton.state = .end
+    self.handleBlur(alpha: 0)
+    self.exchangable = true
   }
 }
 
