@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Add the Privacy - Microphone Usage</key>
-	<string>$(Privacy_Microphone_Usage)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -24,10 +22,6 @@
 	<string>AIzaSyC21USNRGAlF9dkzQa3vSVUvbyps0crjEE</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>$(Privacy_Microphone_Usage)</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>$(Privacy_Speech_Recognition)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -64,5 +58,9 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>$(Privacy_Speech_Recognition)</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>$(Privacy_Microphone_Usage)</string>
 </dict>
 </plist>

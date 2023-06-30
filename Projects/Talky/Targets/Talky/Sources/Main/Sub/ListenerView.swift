@@ -141,6 +141,7 @@ final class ListerView: UIView {
     }
   }
   
+  
   // MARK: - private method
   
   private func checkIsScrollTouchBottom() -> Bool {

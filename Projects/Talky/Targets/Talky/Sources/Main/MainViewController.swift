@@ -38,7 +38,7 @@ class MainViewController: UIViewController, View {
   private lazy var translateIconImageView = UIImageView().then {
     $0.image = Images.tranlsate.image
     $0.isUserInteractionEnabled = true
-    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(test))
+    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(exchangeLanguages))
     $0.addGestureRecognizer(tapGesture)
   }
   
@@ -47,7 +47,6 @@ class MainViewController: UIViewController, View {
     $0.layer.borderColor = Colors.secondary.color.cgColor
     $0.layer.masksToBounds = true
     $0.layer.cornerRadius = 18
-//    $0.image = Images.america.image
     $0.backgroundColor = .clear
   }
   
@@ -61,11 +60,6 @@ class MainViewController: UIViewController, View {
     $0.addArrangedSubview(translateIconImageView)
     $0.addArrangedSubview(targetCountryImageView)
     
-  }
-  
-  @objc private func test() {
-    print("왈왈")
-    self.reactor?.action.onNext(.exchangeLocales)
   }
   
   private let separatorView = UIView().then {
@@ -262,6 +256,9 @@ class MainViewController: UIViewController, View {
   // MARK: - internal method
   
   // MARK: - private method
-
+  
+  @objc private func exchangeLanguages() {
+    self.reactor?.action.onNext(.exchangeLocales)
+  }
 }
 
