@@ -27,11 +27,10 @@ class MainViewController: UIViewController, View {
   }
   
   private let sourceCountryImageView = UIImageView().then {
-    $0.layer.borderWidth = 1.0
-    $0.layer.borderColor = Colors.primary.color.cgColor
+    $0.layer.borderWidth = 2.0
+    $0.layer.borderColor = Colors.secondary.color.cgColor
     $0.layer.masksToBounds = true
     $0.layer.cornerRadius = 18
-//    $0.image = Images.korea.image
     $0.backgroundColor = .clear
   }
   
@@ -43,11 +42,10 @@ class MainViewController: UIViewController, View {
   }
   
   private let targetCountryImageView = UIImageView().then {
-    $0.layer.borderWidth = 1.0
-    $0.layer.borderColor = Colors.secondary.color.cgColor
+    $0.layer.borderWidth = 2.0
+    $0.layer.borderColor = Colors.primary.color.cgColor
     $0.layer.masksToBounds = true
     $0.layer.cornerRadius = 18
-//    $0.image = Images.america.image
     $0.backgroundColor = .clear
   }
   
@@ -64,7 +62,6 @@ class MainViewController: UIViewController, View {
   }
   
   @objc private func test() {
-    print("왈왈")
     self.reactor?.action.onNext(.exchangeLocales)
   }
   
@@ -75,10 +72,13 @@ class MainViewController: UIViewController, View {
   private let voiceReconitionView = ListerView().then {
     $0.role = .speaker
     $0.setPlaceholder(text: L10n.mainAskTurnOnMicrophone)
+    $0.setBorderColor(color: Colors.secondary.color, width: 2)
   }
+  
   private let translationListenerView = ListerView().then {
     $0.role = .translator
     $0.setPlaceholder(text: L10n.mainPrepareingForTranslation)
+    $0.setBorderColor(color: Colors.primary.color, width: 2)
   }
   
   private let recordButton = RecordButtonView()
@@ -137,7 +137,7 @@ class MainViewController: UIViewController, View {
     
     self.separatorView.makeConstraints(baseView: self.baseView) { make in
       make.centerY.leading.trailing.equalToSuperview()
-      make.height.equalTo(30)
+      make.height.equalTo(16)
     }
     
     self.voiceReconitionView.makeConstraints(baseView: self.baseView) { make in

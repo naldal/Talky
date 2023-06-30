@@ -28,15 +28,28 @@ final class RecordButtonView: UIView {
   // MARK: - components
   
   private lazy var baseView = UIView().then {
+    $0.layer.shadowOffset = CGSize(width: 0, height: 5)
+    $0.layer.shadowOpacity = 0.7
+    $0.layer.shadowRadius = 1
+    $0.layer.shadowColor = Colors.secondaryShadow.color.cgColor
+    $0.layer.masksToBounds = false
     $0.layer.cornerRadius = 30
     $0.isUserInteractionEnabled = true
-    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapBase))
-    $0.addGestureRecognizer(tapGesture)
+    let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
+    longPressGesture.minimumPressDuration = 0
+    $0.addGestureRecognizer(longPressGesture)
     $0.backgroundColor = Colors.secondary.color
   }
   
-  @objc private func tapBase() {
-    self.delegate?.tap?(self)
+  @objc private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+    switch gesture.state {
+      case .began:
+        self.setPressOnUI()
+      case .ended, .cancelled:
+        self.setPressOffUI()
+      default:
+        break
+    }
   }
 
   private let iconImageView = UIImageView().then {
@@ -45,8 +58,7 @@ final class RecordButtonView: UIView {
   }
   
   private let lottieView = LottieAnimationView(animation: Animations.recordAnimation.animation).then {
-  
-    $0.animationSpeed = 1.2
+    $0.animationSpeed = 3
     $0.loopMode = .loop
   }
   
@@ -148,6 +160,20 @@ final class RecordButtonView: UIView {
     UIView.transition(with: self.baseView, duration: 0.2) {
       self.baseView.backgroundColor = settableColor
     }
+  }
+  
+  private func setPressOnUI() {
+    var transform = baseView.transform
+    transform = transform.translatedBy(x: 0, y: 5)
+    self.baseView.layer.shadowOffset = .zero
+    self.baseView.transform = transform
+  }
+  
+  private func setPressOffUI() {
+    var transform = baseView.transform
+    transform = transform.translatedBy(x: 0, y: -5)
+    self.baseView.layer.shadowOffset = CGSize(width: 0, height: 5)
+    self.baseView.transform = transform
   }
 }
 
