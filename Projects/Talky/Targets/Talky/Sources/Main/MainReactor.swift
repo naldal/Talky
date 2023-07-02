@@ -35,7 +35,7 @@ final class MainReactor: Reactor {
     var error: TalkyError?
     var recognitionState: Pulse<SFSpeechRecognitionTaskState?> = .init(wrappedValue: nil)
     var voiceConvertedText: Pulse<String?> = .init(wrappedValue: nil)
-    var voiceRecognitionLanguage: Pulse<Locale> = .init(wrappedValue: Locale.current)
+    var voiceRecognitionLanguage: Pulse<Locale> = .init(wrappedValue: Locale.init(identifier: "ko-KR"))
     var translationTargetLanguage: Pulse<Locale> = .init(wrappedValue: Locale.init(identifier: "en-US"))
     var translatedText: Pulse<String> = .init(wrappedValue: "")
   }
@@ -60,9 +60,8 @@ final class MainReactor: Reactor {
     switch action {
         
       case .initialSetting:
-        let initialTranslateLocale = self.currentState.translationTargetLanguage.value
-        let initialRecognitionLocale = self.currentState.voiceRecognitionLanguage.value
-        
+        var initialTranslateLocale = self.currentState.translationTargetLanguage.value
+        var initialRecognitionLocale = self.currentState.voiceRecognitionLanguage.value
         return Observable.from([
           self.setTranslationLocale(locale: initialTranslateLocale),
           self.setVoiceRecognitionLocale(locale: initialRecognitionLocale)
