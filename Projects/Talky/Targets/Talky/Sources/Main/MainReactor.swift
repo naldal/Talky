@@ -42,7 +42,8 @@ final class MainReactor: Reactor {
   
   // MARK: - private properties
   
-  private let usecase: TranslationUsecase
+  private let translationUsecase: TranslationUsecase
+  
   
   // MARK: - internal properties
   
@@ -52,7 +53,7 @@ final class MainReactor: Reactor {
   // MARK: - life cycle
   
   init(usecase: TranslationUsecase) {
-    self.usecase = usecase
+    self.translationUsecase = usecase
   }
   
   func mutate(action: Action) -> Observable<Mutate> {
@@ -82,7 +83,8 @@ final class MainReactor: Reactor {
         ]).flatMap { _ -> Observable<Mutate> in
           return .from([
             .setTranslationTargetLanguage(currentRecognitionLocale),
-            .setVoiceRecognitionLanguage(currentTranslateLocale)
+            .setVoiceRecognitionLanguage(currentTranslateLocale),
+            .setVoiceConvertedText(nil)
           ])
         }
         
@@ -153,38 +155,38 @@ final class MainReactor: Reactor {
   // handle recognizer
   
   private func startAudioRecognizer() {
-    return usecase.startAudioRecognizer()
+    return translationUsecase.startAudioRecognizer()
   }
   
   private func stopAudioRecognizer() {
-    return usecase.stopAudioRecognizer()
+    return translationUsecase.stopAudioRecognizer()
   }
   
   // recognizer states
   
   private func listenRecognizerState() -> Observable<SFSpeechRecognitionTaskState?> {
-    return usecase.listenRecognizerState()
+    return translationUsecase.listenRecognizerState()
   }
   
   private func listenConvertedText() -> Observable<String?> {
-    return usecase.listenConvertedText()
+    return translationUsecase.listenConvertedText()
   }
   
   // locales
   
   private func setVoiceRecognitionLocale(locale: Locale) -> Observable<Void> {
-    return usecase.setVoiceRecognitionLocale(locale: locale)
+    return translationUsecase.setVoiceRecognitionLocale(locale: locale)
   }
   
   private func setTranslationLocale(locale: Locale) -> Observable<Void> {
-    return usecase.setTranslationLocale(locale: locale)
+    return translationUsecase.setTranslationLocale(locale: locale)
   }
   
   
   // translate
   
   private func translate(voiceText: String) -> Observable<Result<TranslationResult, TalkyError>> {
-    return usecase.translate(text: voiceText)
+    return translationUsecase.translate(text: voiceText)
   }
   
 }

@@ -6,5 +6,6 @@
   Copyright © 2023 TeamTalky. All rights reserved.
 */
 
-"Privacy_Microphone_Usage"="Please allow the app to access the microphone. This is an essential procedure to activate the voice recognition function with your voice so that you can use the main functions of the app.";
-"Privacy_Speech_Recognition"="Please allow the app to access voice recognition. You can activate the translation function by using the voice recognition function.";
+NSMicrophoneUsageDescription="앱이 마이크에 접근할 수 있도록 허용해주세요. 이는 음성인식 기능을 사용할 수 있게 합니다.";
+NSSpeechRecognitionUsageDescription="앱이 음성 인식에 액세스할 수 있도록 허용해주세요. 음성 인식 기능을 사용하여 번역 기능을 활성화할 수 있습니다.";
+

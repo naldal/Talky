@@ -59,8 +59,8 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>$(Privacy_Speech_Recognition)</string>
+	<string>앱이 음성 인식에 액세스할 수 있도록 허용해주세요. 음성 인식 기능을 사용하여 번역 기능을 활성화할 수 있습니다.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>$(Privacy_Microphone_Usage)</string>
+	<string>앱이 마이크에 접근할 수 있도록 허용해주세요. 이는 음성인식 기능을 사용할 수 있게 합니다.</string>
 </dict>
 </plist>
