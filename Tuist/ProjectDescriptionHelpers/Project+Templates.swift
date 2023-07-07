@@ -12,7 +12,6 @@ public extension Project {
     deploymentTarget: DeploymentTarget? = .iOS(targetVersion: "15.0", devices: [.iphone]),
     dependencies: [TargetDependency] = [],
     testDependencies: [TargetDependency] = [],
-    bridgingHeaderPath: String? = nil,
     customInfoPlist: InfoPlist? = nil,
     isIncludeOnly: Bool = false
   ) -> Project {
@@ -50,10 +49,7 @@ public extension Project {
     // MARK: - Build settings
           
     var baseSetting: ProjectDescription.SettingsDictionary {
-      if let bridgingHeaderPath {
-        return ["SWIFT_OBJC_BRIDGING_HEADER": SettingValue(stringLiteral: bridgingHeaderPath)]
-      }
-      return [:]
+      return ["SWIFT_OBJC_BRIDGING_HEADER": SettingValue(stringLiteral: "../\(originName)/Support/BridgingHeader/Talky-Bridging-Header.h")]
     }
           
     let settings: Settings = .settings(
@@ -176,6 +172,8 @@ public extension Project {
       dependencies: dependencies
     )
   
+    var testDependencies = testDependencies
+    testDependencies.append(.target(name: targetName))
     let testTarget = Target(
       name: "\(targetName)Tests",
       platform: platform,
