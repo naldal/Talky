@@ -24,6 +24,5 @@ let project = Project.makeModule(
     .quick,
     .nimble
   ],
-  bridgingHeaderPath: "Support/BridgingHeader/Talky-Bridging-Header.h",
   customInfoPlist: .file(path: "Targets/Talky/Resources/TalkyInfo.plist")
 )

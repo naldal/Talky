@@ -61,8 +61,9 @@ final class MainReactor: Reactor {
     switch action {
         
       case .initialSetting:
-        var initialTranslateLocale = self.currentState.translationTargetLanguage.value
-        var initialRecognitionLocale = self.currentState.voiceRecognitionLanguage.value
+        let initialTranslateLocale = self.currentState.translationTargetLanguage.value
+        let initialRecognitionLocale = self.currentState.voiceRecognitionLanguage.value
+
         return Observable.from([
           self.setTranslationLocale(locale: initialTranslateLocale),
           self.setVoiceRecognitionLocale(locale: initialRecognitionLocale)

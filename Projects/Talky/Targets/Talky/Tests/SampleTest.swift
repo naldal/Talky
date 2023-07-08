@@ -12,5 +12,12 @@ import Nimble
 
 final class SampleTest: QuickSpec {
   
+  override func spec() {
+    describe("Math") {
+      it("should correctly calculate the sum of 1+1") {
+        expect(1 + 1).to(equal(2))
+      }
+    }
+  }
   
 }
